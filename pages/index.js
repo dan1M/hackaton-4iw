@@ -1,13 +1,9 @@
-
-import { Inter } from 'next/font/google'
-import Sidebar from '@/component/Sidebar'
-
-const inter = Inter({ subsets: ['latin'] })
+import Sidebar from '@/components/Sidebar';
 
 export default function Home() {
   return (
     <main>
       <Sidebar />
     </main>
-  )
+  );
 }
