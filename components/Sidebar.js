@@ -1,8 +1,5 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { AiOutlineHome } from 'react-icons/ai';
-
-// NavLink component
 
 const Sidebar = () => {
   return (
@@ -31,8 +28,14 @@ const Sidebar = () => {
         <div>
           <ul className='flex flex-col space-y-2'>
             <li className='flex items-center space-x-2'>
-              <AiOutlineHome className='icon-sidebar' />
-              <Link href='/'>Home</Link>
+              <Image
+                alt='logo'
+                src='/pictos/people.png'
+                width={20}
+                height={20}
+                className='mr-4'
+              />
+              <Link href='/'>Social</Link>
             </li>
           </ul>
         </div>
