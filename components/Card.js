@@ -42,10 +42,45 @@ function Card({
   const deleteClient = async (id) => {
     triggerFetch(id);
     if (id) {
-      const { error } = await supabaseClient
-        .from('clients')
-        .delete()
-        .eq('id', id);
+      switch (type) {
+        case 'client':
+          const { error } = await supabaseClient
+            .from('clients')
+            .delete()
+            .eq('id', id);
+          if (error) console.log(error);
+          break;
+        case 'user':
+          const { error1 } = await supabaseClient
+            .from('profiles')
+            .delete()
+            .eq('id', id);
+          if (error1) console.log(error1);
+          break;
+        case 'project':
+          const { error2 } = await supabaseClient
+            .from('projects')
+            .delete()
+            .eq('id', id);
+          if (error2) console.log(error2);
+          break;
+        case 'event':
+          const { error3 } = await supabaseClient
+            .from('events')
+            .delete()
+            .eq('id', id);
+          if (error3) console.log(error3);
+          break;
+        case 'quest':
+          const { error4 } = await supabaseClient
+
+            .from('quests')
+            .delete()
+            .eq('id', id);
+          if (error4) console.log(error4);
+          break;
+        default:
+      }
     }
   };
 
@@ -71,7 +106,13 @@ function Card({
             {subtitle}
           </span>
           <div className='flex mt-4 space-x-3 md:mt-6'>
-            <Button text='Modifier' onClick={() => setDisplayModalEdit(true)} />
+            {type !== 'user' && (
+              <Button
+                text='Modifier'
+                onClick={() => setDisplayModalEdit(true)}
+              />
+            )}
+
             <Button
               text='Supprimer'
               onClick={() => setDisplayModalDelete(true)}
