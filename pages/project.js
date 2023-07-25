@@ -1,134 +1,77 @@
-import {Formik, Form, Field, ErrorMessage} from 'formik'
-import { useState } from 'react'
-import * as Yup from 'yup'
+
+import { useUser, useSessionContext} from '@supabase/auth-helpers-react';
+import { useEffect, useState } from 'react';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
 
 
+const validationSchema = Yup.object().shape({
+  name: Yup.string().required('Name is required'),
+  create_at: Yup.string().required('date is required'),
+});
+const initialValues = {
+    name: '',
+    create_at: '',
+    };
 
-const Project = () => {
-    const [message] = useState('')
-    const [submitted] = useState(false)
-    const [error, setError] = useState(false);
+const LoginPage = () => {
+  const{ supabaseClient} = useSessionContext();
+  const user = useUser();
+  const [data, setData] = useState();
 
-    const initialValues = {
-        name: '',
-        create_at: '',
-    }
+  useEffect(() => {
+    async function fetchProjectData() {
+      try {
 
-    const schema = Yup.object({
-        name: Yup.string().required('Required'),
-        create_at: Yup.string().required('Required'),
-        message: Yup.string().required('Required')
-    })
-
-    const handleDelete = async (id) => {
-        try {
-            const res = await fetch(`http://localhost:3000/api/project/${id}`, {
-                method: 'DELETE'
-            })
-            const data = await res.json()
-            if (!data) {
-                throw new Error('Something went wrong')
-            }
-            setError(false)
-        } catch (error) {
-            setError(true)
+        // const { data } = await supabaseClient.from('projects').select('*').limit(5);
+        //insert
+     const { data } = await supabaseClient.from('projects').insert('*').limit(5);
+                       
+        if (data.length > 0) {
+        
+          const { name, create_at } = data[0];
+          setData({ name, create_at });
         }
+        confirm.log(data);
+      } catch (error) {
+        console.error('Error fetching project data:', error);
+      }
     }
 
-    const handleUpdate = async (id) => {
-        try {
-            const res = await fetch(`http://localhost:3000${id}`, {
-                method: 'PUT'
-            })
-            const data = await res.json()
-            if (!data) {
-                throw new Error('Something went wrong')
-            }
-            setError(false)
-        } catch (error) {
-            setError(true)
-        }
-    }
+  
+    if (user) fetchProjectData();
+  }, [user, supabaseClient]);
+    
+  return (
+    <>
+      
 
-    const handleSubmit = async (values, onSubmitProps) => {
-        try {
-            const res = await fetch('http://localhost:3000', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(values)
-            })
-            const data = await res.json()
-            if (!data) {
-                throw new Error('Something went wrong')
-            }
-            onSubmitProps.resetForm()
-            setError(false)
-        } catch (error) {
-            setError(true)
-        }
-    }
+      <Formik
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+        onSubmit={(values) => {
+  
+          console.log(values);
+        }}
+      >
+        <Form>
+          <div>
+            <label htmlFor="name">Name:</label>
+            <Field type="text" name="name" />
+            <ErrorMessage name="name" component="div" className="error" />
+          </div>
 
-    return (
-        <div className="flex flex-col items-center justify-center min-h-screen py-2">
-            <h1 className="text-5xl font-bold">Project</h1>
-                <Formik
-            initialValues={initialValues}
-            onSubmit={handleSubmit}
-            validationSchema={schema}
-            >
-            {() => (
-                <Form className="w-50">
-                {error ? <p className="alert alert-danger">{error}</p> : null}
-                <div className="mb-3">
-                    <label
-                    htmlFor="name"
-                    className="form-label"
-                    placeholder="Your Name"
-                    >
-                    Email
-                    </label>
-                    <Field
-                    className="form-control"
-                    type="email"
-                    name="email"
-                    placeholder="Your email"
-                    ></Field>
-                    <br></br>
-                    <ErrorMessage
-                    component="span"
-                    className="text-danger"
-                    name="sexe"
-                    ></ErrorMessage>
-                    <br></br>
-                    <label htmlFor="name" className="form-label">
-                    Password
-                    </label>
-                    <Field
-                    className="form-control"
-                    type="password"
-                    name="password"
-                    placeholder="Your password"
-                    ></Field>
-                    <ErrorMessage
-                    component="span"
-                    className="text-danger"
-                    name="password"
-                    ></ErrorMessage>
-                </div>
-                {/* <Button type="submit" className="btn btn-primary">
-                    Log In
-                </Button> */}
-                {/* <button type="submit" className="btn btn-primary"> */}
-                <button type="submit"class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                   Button
-                </button>
-                </Form>
-            )}
-            </Formik>
-        </div>
-    )
-}
+          <div>
+            <label htmlFor="create_at">create at:</label>
+            <Field type="date" name="create_at" />
+            <ErrorMessage name="create_at" component="div" className="error" />
+          </div>
 
-export default Project
+          <button type="submit">Submit</button>
+        </Form>
+      </Formik>
+    </>
+  );
+};
+
+export default LoginPage;
