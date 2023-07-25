@@ -30,9 +30,17 @@ const Sidebar = () => {
         </div>
         <div>
           <ul className='flex flex-col space-y-2'>
-            <li className='flex items-center space-x-2'>
+            <li className='flex items-center space-x-2 li-side'>
               <AiOutlineHome className='icon-sidebar' />
               <Link href='/'>Home</Link>
+            </li>
+            <li className='flex items-center space-x-2 li-side'>
+              <AiOutlineHome className='icon-sidebar' />
+              <Link href='/clients'>Clients</Link>
+            </li>
+            <li className='flex items-center space-x-2 li-side'>
+              <AiOutlineHome className='icon-sidebar' />
+              <Link href='/projects'>Projects</Link>
             </li>
           </ul>
         </div>
