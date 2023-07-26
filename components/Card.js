@@ -87,7 +87,7 @@ function Card({
 
   return (
     <>
-      <div className='w-full max-w-xs m-2 bg-white border border-gray-200 rounded-lg shadow dark:bg-zinc-500 dark:border-gray-700'>
+      <div className='w-full max-w-xs m-2 bg-white border border-gray-200 rounded-lg shadow dark:bg-zinc-500 dark:border-gray-700' >
         <div className='flex justify-end px-4 pt-4'></div>
         <div className='flex flex-col items-center pb-4 '>
           {imageUrl && (

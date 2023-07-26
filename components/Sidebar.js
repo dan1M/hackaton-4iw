@@ -7,8 +7,9 @@ const Sidebar = () => {
       <nav
         className='sm:w-1/5 w-1/5 shadow-md sidebar'
         style={{
-          height: '790px',
+          height: '800px',
           width: '15%',
+          position: 'relative',
           boxShadow: '10px 5px 5px black',
           borderRadius: '5px',
         }}
