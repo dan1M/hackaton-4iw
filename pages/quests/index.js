@@ -106,6 +106,7 @@ const Quests = () => {
       const customType = templateTypeQuest[formData.questType];
       formValues.name = customType.name;
       formValues.description = customType.description;
+      formValues.type = customType.type;
     }
 
     if (formData.difficulty !== "custom") {
@@ -222,6 +223,22 @@ const Quests = () => {
                             onChange={handleChange}
                             required
                           />
+                          <label
+                            htmlFor="type"
+                            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                          >
+                            Type
+                          </label>
+                          <select
+                            value={formData.type}
+                            onChange={handleChange}
+                            name="type"
+                            id="type"
+                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                          >
+                            <option value="irl">En réalité</option>
+                            <option value="ig">En jeu</option>
+                          </select>
                           <br />
                           {/* <label className="relative inline-flex items-center cursor-pointer">
                             <input
@@ -238,23 +255,6 @@ const Quests = () => {
                           </label> */}
                         </div>
                       )}
-                      <label
-                        htmlFor="type"
-                        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                      >
-                        Type
-                      </label>
-                      <select
-                        value={formData.type}
-                        onChange={handleChange}
-                        name="type"
-                        id="type"
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      >
-                        <option value="irl">En réalité</option>
-                        <option value="ig">En jeu</option>
-                      </select>
-
                       <label
                         htmlFor="difficulty"
                         className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -366,10 +366,12 @@ const templateTypeQuest = {
   talk: {
     name: "Parler",
     description: "Parler à un joueur",
+    type: "ig",
   },
   visit: {
     name: "Visiter Profil",
     description: "Visiter le profil d'un joueur",
+    type: "ig",
   },
 };
 
