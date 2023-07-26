@@ -3,3 +3,59 @@
 @tailwind utilities;
 
 
+.icon-sidebar {
+    overflow: auto;
+    margin-left: 10px;
+}
+
+
+.li-side {
+    color: white;
+    font-size: 1.2rem;
+    text-decoration: none;
+    margin-top: 1em;
+    display: flex;
+    font-weight: bold;
+    padding: .5em;
+    margin-left: -.5em;
+    position: relative;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
+}
+
+.li-side:before, .li-side:after {
+    position: absolute;
+    content: '';
+    border-bottom: 3px solid crimson;
+    border-radius: 1em;
+    bottom: .3em;
+    transition: transform .5s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+.li-side:before {
+    width: 1em;
+    transform-origin: left;
+}
+
+.li-side:after {
+    width: 82%;
+    left: 1em;
+    transform: translateX(110%);
+}
+
+.li-side:hover:before {
+    transform: scaleX(0.3);
+}
+
+.li-side:hover:after {
+    transform: translateX(0);
+}
+
+
+.sidebar {
+    background-color: rgb(43, 44, 44);
+}
+
+
+a {
+    cursor: pointer;
+}

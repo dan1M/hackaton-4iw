@@ -5,11 +5,11 @@ const Sidebar = () => {
   return (
     <>
       <nav
-        className='sm:w-1/5 w-1/5 bg-white shadow-md'
+        className='sm:w-1/5 w-1/5 bg-white shadow-md sidebar'
         style={{
           height: '790px',
           width: '15%',
-          boxShadow: '10px 5px 5px #E8E8E8',
+          boxShadow: '10px 5px 5px black',
           position: 'fixed',
           borderRadius: '5px',
         }}
