@@ -113,7 +113,7 @@ function Card({
                 onClick={() => setDisplayModalEdit(true)}
               />
             )}
-            )
+
             <Button
               text="Supprimer"
               onClick={() => setDisplayModalDelete(true)}
