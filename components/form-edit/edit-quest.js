@@ -55,17 +55,24 @@ export default function FormQuest({ id, triggerFetch }) {
   };
   const updateQuests = async e => {
     e.preventDefault();
+    const formValues = formData;
+
+    if (formData.difficulty !== "custom") {
+      const customDifficulty = templateDifficultyQuest[formData.difficulty];
+      formValues.xp = customDifficulty.xp;
+      formValues.taskNumber = customDifficulty.number_to_do;
+    }
     const { data, error } = await supabaseClient
       .from("quests")
       .update({
-        name: formData.name,
-        description: formData.description,
-        type: formData.type,
-        difficulty: formData.difficulty,
-        isSolo: formData.isSolo,
-        frequency: formData.frequency,
-        xp: formData.xp,
-        number_to_do: formData.taskNumber,
+        name: formValues.name,
+        description: formValues.description,
+        type: formValues.type,
+        difficulty: formValues.difficulty,
+        isSolo: formValues.isSolo,
+        frequency: formValues.frequency,
+        xp: formValues.xp,
+        number_to_do: formValues.taskNumber,
       })
       .eq("id", id)
       .select();
@@ -118,7 +125,7 @@ export default function FormQuest({ id, triggerFetch }) {
             />
             <br />
 
-            <label className="relative inline-flex items-center cursor-pointer">
+            {/* <label className="relative inline-flex items-center cursor-pointer">
               <input
                 type="checkbox"
                 value=""
@@ -131,7 +138,7 @@ export default function FormQuest({ id, triggerFetch }) {
               <span className="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">
                 Solo
               </span>
-            </label>
+            </label> */}
 
             <label
               htmlFor="type"
@@ -166,6 +173,7 @@ export default function FormQuest({ id, triggerFetch }) {
               <option value="easy">Facile</option>
               <option value="medium">Moyen</option>
               <option value="hard">Difficile</option>
+              <option value="custom">Custom</option>
             </select>
 
             <label
@@ -185,39 +193,43 @@ export default function FormQuest({ id, triggerFetch }) {
               <option value="hebdo">Hebdomadaire</option>
             </select>
 
-            <label
-              htmlFor="xp"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              Xp
-            </label>
-            <input
-              type="number"
-              name="xp"
-              id="xp"
-              value={formData.xp}
-              className="bg-gray-50 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:placeholder-gray-400 dark:text-white"
-              placeholder="xp"
-              onChange={handleChange}
-              required
-            />
+            {formData.difficulty === "custom" && (
+              <div>
+                <label
+                  htmlFor="xp"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >
+                  Xp
+                </label>
+                <input
+                  type="number"
+                  name="xp"
+                  value={formData.xp}
+                  id="xp"
+                  className="bg-gray-50 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:placeholder-gray-400 dark:text-white"
+                  placeholder="xp"
+                  onChange={handleChange}
+                  required
+                />
 
-            <label
-              htmlFor="taskNumber"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              Nombre à réaliser
-            </label>
-            <input
-              type="number"
-              name="taskNumber"
-              value={formData.taskNumber}
-              id="taskNumber"
-              className="bg-gray-50 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:placeholder-gray-400 dark:text-white"
-              placeholder=""
-              onChange={handleChange}
-              required
-            />
+                <label
+                  htmlFor="taskNumber"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >
+                  Nombre à réaliser
+                </label>
+                <input
+                  type="number"
+                  name="taskNumber"
+                  id="taskNumber"
+                  value={formData.taskNumber}
+                  className="bg-gray-50 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:placeholder-gray-400 dark:text-white"
+                  placeholder=""
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+            )}
           </div>
         }
 
@@ -226,3 +238,20 @@ export default function FormQuest({ id, triggerFetch }) {
     </div>
   );
 }
+
+const templateDifficultyQuest = {
+  easy: {
+    xp: 20,
+    number_to_do: 3,
+  },
+
+  medium: {
+    xp: 50,
+    number_to_do: 50,
+  },
+
+  hard: {
+    xp: 100,
+    number_to_do: 10,
+  },
+};
