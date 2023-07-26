@@ -10,32 +10,46 @@ const Sidebar = () => {
           height: '790px',
           width: '15%',
           boxShadow: '10px 5px 5px black',
-          position: 'fixed',
           borderRadius: '5px',
         }}
       >
         <div className='sticky top-0 space-y-8 bg-white'>
-          <div className='h-20 flex items-center px-4 border-b'>
-            <Image
-              alt='logo'
-              src='next.svg'
-              width={140}
-              height={140}
-              className='mx-auto'
-            />
+          <div className='h-20 flex items-center border-b'>
+            <Image alt='logo' src='/logo.png' width={270} height={270} />
           </div>
         </div>
         <div>
           <ul className='flex flex-col space-y-2'>
-            <li className='flex items-center space-x-2'>
+            <li className='flex items-center space-x-2 li-side'>
               <Image
                 alt='logo'
-                src='/pictos/people.png'
+                src='/pictos/people-white.png'
                 width={20}
                 height={20}
-                className='mr-4'
+                className='mx-4'
               />
-              <Link href='/'>Social</Link>
+              <Link href='/social'>Social</Link>
+            </li>
+            <li className='flex items-center space-x-2 li-side'>
+              <Image
+                alt='logo'
+                src='/pictos/client.png'
+                width={20}
+                height={20}
+                className='mx-4'
+              />
+              <Link href='/clients'>Clients</Link>
+            </li>
+            <li className='flex items-center space-x-2 li-side'>
+              <Image
+                alt='logo'
+                src='/pictos/formation.png'
+                width={20}
+                height={20}
+                className='mx-4'
+              />
+
+              <Link href='/formations'>Formations</Link>
             </li>
           </ul>
         </div>
