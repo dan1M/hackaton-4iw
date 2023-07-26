@@ -25,7 +25,7 @@
 .li-side:before, .li-side:after {
     position: absolute;
     content: '';
-    border-bottom: 3px solid crimson;
+    border-bottom: 3px solid #E53F49;
     border-radius: 1em;
     bottom: .3em;
     transition: transform .5s cubic-bezier(0.075, 0.82, 0.165, 1);
