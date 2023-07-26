@@ -20,6 +20,7 @@
     position: relative;
     clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
 
+
     &:before, &:after {
         position: absolute;
         content: '';
@@ -53,3 +54,6 @@
     background-color: rgb(43,44,44);
 }
 
+Link{
+    cursor: pointer;
+}
