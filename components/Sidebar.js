@@ -5,7 +5,7 @@ const Sidebar = () => {
   return (
     <>
       <nav
-        className='sm:w-1/5 w-1/5 bg-white shadow-md sidebar'
+        className='sm:w-1/5 w-1/5 shadow-md sidebar'
         style={{
           height: '790px',
           width: '15%',
@@ -13,8 +13,8 @@ const Sidebar = () => {
           borderRadius: '5px',
         }}
       >
-        <div className='space-y-8 bg-white'>
-          <div className='h-20 flex items-center border-b'>
+        <div className='space-y-8'>
+          <div className='h-20 flex items-center'>
             <Image alt='logo' src='/logo.png' width={270} height={270} />
           </div>
         </div>
