@@ -15,13 +15,14 @@ export default function App({ Component, pageProps }) {
       supabaseClient={supabaseClient}
       initialSession={pageProps.initialSession}
     >
-      {router.pathname !== '/login' && (
+      {router.pathname !== '/login' ? (
         <div className='flex'>
           <Sidebar />
           <Component {...pageProps} />
         </div>
+      ) : (
+        <Component {...pageProps} />
       )}
-      <Component {...pageProps} />
     </SessionContextProvider>
   );
 }

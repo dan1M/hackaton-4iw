@@ -27,8 +27,7 @@ export default function Profile() {
       setProfile(data);
     }
   };
-  {
-  }
+
   useEffect(() => {
     fetchProfile();
   }, [id]);
@@ -74,9 +73,9 @@ export default function Profile() {
           </li>
         </ul>
 
-        {activePage === 'infos' && <ProfileInfos />}
-        {activePage === 'skill' && <ProfileSkills />}
-        {activePage === 'quest' && <ProfileHistory />}
+        {activePage === 'infos' && <ProfileInfos profile={profile} />}
+        {activePage === 'skill' && <ProfileSkills profile={profile} />}
+        {activePage === 'quest' && <ProfileHistory profile={profile} />}
       </div>
     </main>
   );

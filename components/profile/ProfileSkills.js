@@ -1,3 +1,3 @@
-export default function ProfileSkills() {
+export default function ProfileSkills({ profile }) {
   return <></>;
 }

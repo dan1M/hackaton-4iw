@@ -1,3 +1,3 @@
-export default function ProfileHistory() {
+export default function ProfileHistory({ profile }) {
   return <></>;
 }
