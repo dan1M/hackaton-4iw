@@ -9,6 +9,7 @@
 }
 
 .li-side {
+    color: white;
     font-size: 1.2rem;
     text-decoration: none;
     margin-top: 1em;
@@ -22,7 +23,7 @@
     &:before, &:after {
         position: absolute;
         content: '';
-        border-bottom: 3px solid rgb(0, 99, 228);
+        border-bottom: 3px solid crimson;
         border-radius: 1em;
         bottom: .3em;
         transition: transform .5s cubic-bezier(0.075, 0.82, 0.165, 1);
@@ -48,5 +49,7 @@
     }
 
 }
-
+.sidebar{
+    background-color: rgb(43,44,44);
+}
 
