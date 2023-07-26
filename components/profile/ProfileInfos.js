@@ -1,13 +1,28 @@
 import { useSessionContext } from '@supabase/auth-helpers-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import Button from '../Button';
 
 export default function ProfileInfos({ profile }) {
+  const [user, setUser] = useState(null); // State to hold the error message
   const { supabaseClient } = useSessionContext();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
     username: '',
   });
+  const [isEditing, setIsEditing] = useState(false);
+
+  useEffect(() => {
+    setUser(JSON.parse(sessionStorage.getItem('user')));
+  }, []);
+
+  useEffect(() => {
+    setFormData({
+      email: profile?.email,
+      password: profile?.password,
+      username: profile?.username,
+    });
+  }, [profile]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -20,34 +35,140 @@ export default function ProfileInfos({ profile }) {
 
   const updateProfile = async (e) => {
     e.preventDefault();
-    console.log('update profile');
+    const { data, error } = await supabaseClient
+      .from('profiles')
+      .update(formData)
+      .eq('id', profile.id)
+      .select();
+
+    if (data) {
+      console.log(data);
+      setIsEditing(!isEditing);
+    }
   };
-  console.log('profile:', formData);
+
   return (
     <section>
-      <h1 className='text-2xl font-bold tracking-wide text-center mt-4'>
-        Infos
-      </h1>
-      <div>
+      <div className='py-8'>
+        <h1 className='text-2xl font-bold tracking-wide text-center mt-4'>
+          Infos
+        </h1>
         <div>
-          <label
-            htmlFor='email'
-            className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'
-          >
-            Email
-          </label>
-          <input
-            type='text'
-            name='email'
-            defaultValue={profile?.email}
-            id='email'
-            className='text-sm rounded-lg outline-none block w-full p-2.5 dark:bg-transparent dark:placeholder-gray-400 '
-            placeholder='Email'
-            onChange={handleChange}
-            required
-          />
+          {profile && user && profile.id === user.id && (
+            <div className='flex items-center'>
+              <label
+                htmlFor='full_name'
+                className='block text-md font-semibold'
+              >
+                Nom&nbsp;complet&nbsp;:
+              </label>
+              <input
+                type='text'
+                name='full_name'
+                defaultValue={profile?.full_name}
+                id='full_name'
+                className={
+                  'text-md outline-none block w-full p-2.5 dark:bg-transparent ' +
+                  (isEditing ? 'border-b-2 border-white' : 'border-none')
+                }
+                onChange={handleChange}
+                readOnly={!isEditing}
+                required
+              />
+            </div>
+          )}
+          <div className='flex items-center'>
+            <label htmlFor='username' className='block text-md font-semibold'>
+              Pseudo&nbsp;:
+            </label>
+            <input
+              type='text'
+              name='username'
+              defaultValue={profile?.username}
+              id='username'
+              className={
+                'text-md outline-none block w-full p-2.5 dark:bg-transparent ' +
+                (isEditing ? 'border-b-2 border-white' : 'border-none')
+              }
+              onChange={handleChange}
+              readOnly={!isEditing}
+              required
+            />
+          </div>
+          <div className='flex items-center'>
+            <label htmlFor='email' className='block text-md font-semibold'>
+              Email&nbsp;:
+            </label>
+            <input
+              type='text'
+              name='email'
+              defaultValue={profile?.email}
+              id='email'
+              className={
+                'text-md outline-none block w-full p-2.5 dark:bg-transparent ' +
+                (isEditing ? 'border-b-2 border-white' : 'border-none')
+              }
+              onChange={handleChange}
+              readOnly={!isEditing}
+              required
+            />
+          </div>
+          {profile && user && profile.id === user.id && (
+            <div className='flex items-center'>
+              <label htmlFor='password' className='block text-md font-semibold'>
+                Mot&nbsp;de&nbsp;passe&nbsp;:
+              </label>
+              <input
+                type={!isEditing ? 'password' : 'text'}
+                name='password'
+                defaultValue={profile?.password}
+                id='password'
+                className={
+                  'text-md outline-none block w-full p-2.5 dark:bg-transparent ' +
+                  (isEditing ? 'border-b-2 border-white' : 'border-none')
+                }
+                onChange={handleChange}
+                readOnly={!isEditing}
+                required
+              />
+            </div>
+          )}
         </div>
       </div>
+
+      {profile && user && profile.id === user.id && (
+        <>
+          <div className='flex justify-center '>
+            {!isEditing ? (
+              <Button
+                text='Modifier'
+                onClick={() => setIsEditing(!isEditing)}
+              />
+            ) : (
+              <div className='flex'>
+                <Button text='Enregistrer' onClick={updateProfile} />
+                <Button
+                  text='Annuler'
+                  onClick={() => {
+                    setIsEditing(!isEditing);
+                    setFormData({
+                      email: profile?.email,
+                      password: profile?.password,
+                      username: profile?.username,
+                    });
+                  }}
+                />
+              </div>
+            )}
+          </div>
+
+          <div className='py-8'>
+            <h1 className='text-2xl font-bold tracking-wide text-center mt-4'>
+              Paramètres
+            </h1>
+          </div>
+        </>
+      )}
     </section>
   );
 }
