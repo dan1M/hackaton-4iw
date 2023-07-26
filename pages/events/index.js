@@ -6,7 +6,7 @@ import Button from '@/components/Button';
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required('Name is required'),
-  place: Yup.string().required('Place is required'),
+  place: Yup.string().required('place is required'),
 });
 
 const EventPage = () => {
@@ -14,15 +14,11 @@ const EventPage = () => {
   const user = useUser();
   const [data, setData] = useState([]);
   const [editEventId, setEditEventId] = useState(null);
-  const [lastPlace, setLastPlace] = useState(0);
 
   const fetchEventData = async () => {
     try {
-      const { data } = await supabaseClient.from('events').select('*').order('place', { ascending: false }).limit(1);
+      const { data } = await supabaseClient.from('events').select('*');
       setData(data);
-      if (data.length > 0) {
-        setLastPlace(data[0].place);
-      }
     } catch (error) {
       console.error('Error fetching event data:', error);
     }
@@ -36,8 +32,7 @@ const EventPage = () => {
 
   const handleCreateEvent = async (values) => {
     try {
-      const newPlace = lastPlace + 1;
-      const { data, error } = await supabaseClient.from('events').insert({ ...values, place: newPlace });
+      const { data, error } = await supabaseClient.from('events').insert(values);
       if (error) {
         console.error('Error creating event:', error);
       } else {
@@ -53,7 +48,7 @@ const EventPage = () => {
     setEditEventId(eventId);
   };
 
-  const handleUpdateEvent = async (values) => {
+  const handleUpPlaceEvent = async (values) => {
     try {
       const { data, error } = await supabaseClient
         .from('events')
@@ -94,7 +89,7 @@ const EventPage = () => {
               initialValues={{ name: event.name, place: event.place }}
               validationSchema={validationSchema}
               onSubmit={(values) => {
-                handleUpdateEvent({ ...values, id: event.id });
+                handleUpPlaceEvent({ ...values, id: event.id });
               }}
             >
               <Form>
@@ -114,7 +109,7 @@ const EventPage = () => {
           ) : (
             <>
               <h2>{event.name}</h2>
-              <p>Place: {event.place}</p>
+              <p>{event.place}</p>
               <button onClick={() => handleEditEvent(event.id)}>Edit</button>
               <button onClick={() => handleDeleteEvent(event.id)}>Delete</button>
             </>
