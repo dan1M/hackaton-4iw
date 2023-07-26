@@ -57,7 +57,7 @@ export default function FormEvent({ id, triggerFetch }) {
               htmlFor='name'
               className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'
             >
-              Nom
+              Nomxz
             </label>
             <input
               type='text'
