@@ -12,7 +12,7 @@ const Users = () => {
     email: '',
     password: '',
     full_name: '',
-    role: '',
+    role: 'dev',
     job_title: '',
   });
   useEffect(() => {
