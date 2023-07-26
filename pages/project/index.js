@@ -1,133 +1,130 @@
-import { useUser, useSessionContext } from '@supabase/auth-helpers-react';
-import { useState, useEffect } from 'react';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
-import * as Yup from 'yup';
 import Button from '@/components/Button';
+import Card from '@/components/Card';
+import { useSessionContext } from '@supabase/auth-helpers-react';
+import { useEffect, useState } from 'react';
+import CustomModal from '@/components/CustomModal';
 
-const validationSchema = Yup.object().shape({
-  name: Yup.string().required('Name is required'),
-});
-
-const ProjectPage = () => {
+const Projects = () => {
   const { supabaseClient } = useSessionContext();
-  const user = useUser();
-  const [data, setData] = useState([]);
-  const [editProjectId, setEditProjectId] = useState(null);
 
-  const fetchProjectData = async () => {
-    try {
-      const { data } = await supabaseClient.from('projects').select('*');
-      setData(data);
-    } catch (error) {
-      console.error('Error fetching project data:', error);
-    }
-  };
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [projects, setProjects] = useState([]);
+
+  const [formData, setFormData] = useState({
+    name: '',
+  });
 
   useEffect(() => {
-    if (user) {
-      fetchProjectData();
-    }
-  }, [user, supabaseClient]);
+    fetchProjects();
+  }, []);
 
-  const handleCreateProject = async (values) => {
-    try {
-      const { data, error } = await supabaseClient.from('projects').insert(values);
-      if (error) {
-        console.error('Error creating project:', error);
-      } else {
-        console.log('Project created successfully:', data);
-        fetchProjectData();
-      }
-    } catch (error) {
-      console.error('Error creating project:', error);
-    }
+  const fetchProjects = async () => {
+    const { data } = await supabaseClient.from('projects').select('*');
+    setProjects(data);
   };
 
-  const handleEditProject = (projectId) => {
-    setEditProjectId(projectId);
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
   };
 
-  const handleUpdateProject = async (values) => {
-    try {
-      const { data, error } = await supabaseClient
-        .from('projects')
-        .update(values)
-        .eq('id', editProjectId);
-      if (error) {
-        console.error('Error updating project:', error);
-      } else {
-        console.log('Project updated successfully:', data);
-        setEditProjectId(null);
-        fetchProjectData();
-      }
-    } catch (error) {
-      console.error('Error updating project:', error);
-    }
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
   };
 
-  const handleDeleteProject = async (projectId) => {
-    try {
-      const { error } = await supabaseClient.from('projects').delete().eq('id', projectId);
-      if (error) {
-        console.error('Error deleting project:', error);
-      } else {
-        console.log('Project deleted successfully');
-        fetchProjectData();
-      }
-    } catch (error) {
-      console.error('Error deleting project:', error);
-    }
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleCreateUser = async (e) => {
+    e.preventDefault();
+    const { error } = await supabaseClient.from('projects').insert({ name: formData.name });
+    handleCloseModal();
+    fetchProjects();
   };
 
   return (
-    <>
-      {data.map((project) => (
-        <div key={project.id}>
-          {editProjectId === project.id ? (
-            <Formik
-              initialValues={{ name: project.name }}
-              validationSchema={validationSchema}
-              onSubmit={(values) => {
-                handleUpdateProject({ ...values, id: project.id });
-              }}
+    <main className='p-4'>
+      <Button text='Ajouter un projet' onClick={handleOpenModal} />
+
+      <CustomModal isOpen={isModalOpen} onRequestClose={handleCloseModal}>
+        <div className='relative w-full max-w-md max-h-full'>
+          <div className='relative'>
+            <button
+              type='button'
+              className='absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white'
+              onClick={handleCloseModal}
             >
-              <Form>
+              <svg
+                className='w-3 h-3'
+                xmlns='http://www.w3.org/2000/svg'
+                fill='none'
+                viewBox='0 0 14 14'
+              >
+                <path
+                  stroke='currentColor'
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  strokeWidth='2'
+                  d='m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6'
+                />
+              </svg>
+              <span className='sr-only'>Close modal</span>
+            </button>
+            <div className='px-6 py-6 lg:px-8'>
+              <h3 className='mb-4 text-xl font-medium text-gray-900 dark:text-white'>
+                Ajouter un projet
+              </h3>
+              <form className='space-y-6' onSubmit={handleCreateUser}>
                 <div>
-                  <label htmlFor='name'>Name:</label>
-                  <Field type='text' name='name' />
-                  <ErrorMessage name='name' component='div' className='error' />
+                  <label
+                    htmlFor='name'
+                    className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'
+                  >
+                    Name
+                  </label>
+                  <input
+                    type='text'
+                    name='name'
+                    id='name'
+                    className='bg-gray-50 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:placeholder-gray-400 dark:text-white'
+                    placeholder='Name'
+                    onChange={handleChange}
+                    required
+                  />
                 </div>
-                <Button type='submit' text='Save' />
-              </Form>
-            </Formik>
-          ) : (
-            <>
-              <h2>{project.name}</h2>
-              <button onClick={() => handleEditProject(project.id)}>Edit</button>
-              <button onClick={() => handleDeleteProject(project.id)}>Delete</button>
-            </>
-          )}
-        </div>
-      ))}
-      <Formik
-        initialValues={{ name: '' }}
-        validationSchema={validationSchema}
-        onSubmit={(values, { resetForm }) => {
-          handleCreateProject(values);
-          resetForm();
-        }}
-      >
-        <Form>
-          <div>
-            <label htmlFor='name'>Name:</label>
-            <Field type='text' name='name' />
-            <ErrorMessage name='name' component='div' className='error' />
+
+                <Button text='Ajouter un project' type='submit' />
+              </form>
+            </div>
           </div>
-          <Button type='submit' text='Create' />
-        </Form>
-      </Formik>
-    </>
+        </div>
+      </CustomModal>
+      <div className='flex flex-wrap'>
+        {projects?.map((project) => {
+          return (
+            <Card
+              key={project.id}
+              id={project.id}
+              title={project.name}
+              imageUrl={'next.svg'}
+              triggerFetch={(id) => {
+                if (id) {
+                  setProjects(projects.filter((project) => project.id !== id));
+                } else {
+                  fetchProjects();
+                }
+              }}
+              type='project'
+            />
+          );
+        })}
+      </div>
+    </main>
   );
 };
 
-export default ProjectPage;
+export default Projects;
