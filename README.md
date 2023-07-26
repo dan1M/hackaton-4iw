@@ -36,3 +36,113 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+
+  
+
+   <div style={{ textAlign: "center", cursor: "pointer" }}>
+        {type === "event" && user && (
+          <Button
+            text={inscription ? "Se désinscrire" : "S'inscrire"}
+            onClick={() => handleRegisterEvent(id)}
+          />
+        )}
+        {type === "event" && !user && ( 
+          <p>Please log in to register for this event.</p>
+        )}
+      </div>
+
+
+
+     const isUserRegisteredForEvent = async (eventId, profileId, supabaseClient) => {
+    try {
+      const { data, error } = await supabaseClient
+        .from("profilesevents")
+        .select("*")
+        .eq("event_id", eventId)
+        .eq("profile_id", profileId)
+        .single();
+  
+      if (data) {
+        
+        return true;
+      } else {
+      
+        return false;
+      }
+    } catch (error) {
+      console.error("Error checking event registration:", error.message);
+      return false;
+    }
+  };
+
+
+
+  useEffect(() => {
+    const fetchInscriptionStatus = async () => {
+      if (type === "event" && user) {
+        const isRegistered = await isUserRegisteredForEvent(id, user.id, supabaseClient);
+        setInscription(isRegistered);
+      }
+    };
+    fetchInscriptionStatus();
+  }, [type, id, user, supabaseClient]);
+
+  const handleRegisterEvent = async (eventId) => {
+    try {
+      if (!user) {
+        console.log('User not logged in. Please log in to register for the event.');
+        return;
+      }
+  
+      const { data: profileData, error: profileError } = await supabaseClient
+        .from('profiles')
+        .select('id')
+        .eq('email', user.email)
+        .single();
+  
+      if (profileError) {
+        console.error('Error fetching user profile:', profileError);
+        return;
+      }
+  
+      const profileId = profileData?.id;
+  
+      if (!profileId) {
+        console.log('User profile ID not found.');
+        return;
+      }
+  
+      if (await isUserRegisteredForEvent(eventId, profileId, supabaseClient)) {
+        const { data, error } = await supabaseClient
+          .from('profilesevents')
+          .delete()
+          .eq('event_id', eventId)
+          .eq('profile_id', profileId);
+  
+        if (data) {
+          console.log('User unregistered from the event successfully!');
+          setInscription(false);
+          fetchEvents();
+        } else {
+          console.error('Error unregistering user from the event:', error);
+        }
+      } else {
+        const { data, error } = await supabaseClient
+          .from('profilesevents')
+          .insert([{ event_id: eventId, profile_id: profileId }]);
+  
+        if (data) {
+          console.log('User registered for the event successfully!');
+          setInscription(true);
+          fetchEvents();
+        } else {
+          console.error('Error registering user for the event:', error);
+        }
+      }
+    } catch (error) {
+      console.error('Error registering/unregistering user for the event:', error.message);
+    }
+  };
+  
+  
