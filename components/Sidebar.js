@@ -13,7 +13,7 @@ const Sidebar = () => {
           borderRadius: '5px',
         }}
       >
-        <div className='sticky top-0 space-y-8 bg-white'>
+        <div className='space-y-8 bg-white'>
           <div className='h-20 flex items-center border-b'>
             <Image alt='logo' src='/logo.png' width={270} height={270} />
           </div>
