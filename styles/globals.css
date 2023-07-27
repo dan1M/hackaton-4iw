@@ -20,14 +20,13 @@
   clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
 }
 
-.li-side:before,
-.li-side:after {
-  position: absolute;
-  content: '';
-  border-bottom: 3px solid crimson;
-  border-radius: 1em;
-  bottom: 0.3em;
-  transition: transform 0.5s cubic-bezier(0.075, 0.82, 0.165, 1);
+.li-side:before, .li-side:after {
+    position: absolute;
+    content: '';
+    border-bottom: 3px solid #E53F49;
+    border-radius: 1em;
+    bottom: .3em;
+    transition: transform .5s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
 .li-side:before {
