@@ -128,14 +128,16 @@ const Quests = () => {
       quest_type: formValues.questType,
     });
     resetFormData();
-    // handleCloseModal();
     handleCloseModalCustom();
     fetchQuests();
   };
 
   return (
     <main className="p-4">
-      <Button text="Ajouter une quete" onClick={handleOpenModalCustom} />
+      <Button
+        text="Ajouter une quete"
+        onClick={handleOpenModalCustom}
+      />
 
       <CustomModal
         isOpen={isModalCustomOpen}

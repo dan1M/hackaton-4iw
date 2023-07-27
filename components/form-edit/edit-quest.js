@@ -233,7 +233,7 @@ export default function FormQuest({ id, triggerFetch }) {
           </div>
         }
 
-        <Button text="Modifier une formation" type="submit" />
+        <Button text="Modifier une quête" type="submit" />
       </form>
     </div>
   );
