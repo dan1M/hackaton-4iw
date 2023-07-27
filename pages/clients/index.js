@@ -86,7 +86,6 @@ const Clients = () => {
       return;
     }
 
-    console.log(selectedImage);
     const { data, error } = await supabaseClient.storage
       .from("uploads/contents")
       .upload(selectedImage.name, selectedImage);
