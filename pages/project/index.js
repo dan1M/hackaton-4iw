@@ -7,7 +7,7 @@ import { useSessionContext } from '@supabase/auth-helpers-react';
 const Projects = () => {
   const { supabaseClient } = useSessionContext();
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);  
   const [isAssociateModalOpen, setIsAssociateModalOpen] = useState(false);
   const [projects, setProjects] = useState([]);
   const [clients, setClients] = useState([]);
@@ -61,11 +61,11 @@ const Projects = () => {
       if (error) {
         console.error('Error fetching users:', error);
       }
-    } catch (error) {
+    }
+    catch (error) {
       console.error('Error fetching users:', error.message);
     }
   };
-
   const user = typeof window !== 'undefined' ? JSON.parse(sessionStorage.getItem('user')) : null;
   const role = user?.role;
   console.log(role);
@@ -77,7 +77,6 @@ const Projects = () => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
-
   const handleOpenAssociateModal = () => {
     setIsAssociateModalOpen(true);
   };
@@ -130,6 +129,7 @@ const Projects = () => {
       console.error('Error adding client to the project:', error.message);
     }
   };
+
 
   const handleAssociateChange = (e) => {
     const { name, value } = e.target;
@@ -195,23 +195,24 @@ const Projects = () => {
     <main className="p-4">
       <div>
 
-      {(role === 'mgr' || role === 'rh') && (
-        <Button text="Ajouter un projet" onClick={handleOpenModal} />
-      )}
-      </div>
+    {(role === 'mgr' || role === 'rh') && (
+      <Button text="Ajouter un projet" onClick={handleOpenModal} />
+    )}
+    </div>
 
 
-      <div>
-      {(role === 'mgr' || role === 'rh') && (
-              <Button
-                text="Associer un projet aux développeurs"
-                onClick={handleOpenAssociateModal}
-              />
-            )}
-          
-      </div>
+    <div>
+    {(role === 'mgr' || role === 'rh') && (
+            <Button
+              text="Associer un projet aux développeurs"
+              onClick={handleOpenAssociateModal}
+            />
+          )}
+        
+    </div>
 
-      {/* Formulaire pour ajouter un projet */}
+    {/* Formulaire pour ajouter un projet */}
+   
       <CustomModal
         isOpen={isModalOpen}
         onRequestClose={handleCloseModal}
