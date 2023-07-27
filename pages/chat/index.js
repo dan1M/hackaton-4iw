@@ -6,7 +6,8 @@ import CustomModal from "@/components/CustomModal";
 import Conversation from "@/components/Conversation";
 import Lottie from "lottie-react";
 
-import json from "./animation.json";
+import json from "../../public/animations/animation.json";
+import confetti from "../../public/animations/confetti.json";
 
 const Chat = () => {
   const { supabaseClient } = useSessionContext();
@@ -19,7 +20,7 @@ const Chat = () => {
   const [name, setName] = useState([]);
 
   const [displayModalQuestSuccess, setDisplayModalQuestSuccess] =
-    useState(true);
+    useState(false);
 
   const [conversationId, setConversationId] = useState(null);
 
@@ -115,54 +116,55 @@ const Chat = () => {
   const handleSubmit = async e => {
     e.preventDefault();
 
-    //regarder si la quete est en cours si oui update en conscéqudnce
-    const { data: profilequest } = await supabaseClient
+    const { data: profilequests } = await supabaseClient
       .from("profilesquests")
       .select("*")
       .match({ profile_id: user.id, type: "talk" });
 
-    const { data: quest } = await supabaseClient
-      .from("quests")
-      .select("*")
-      .match({ id: profilequest[0].quest_id });
-    //updater la valeur de la quete en cours et regarder si elle est finie.
-    console.log("NUMBER TO DO : ", quest[0].number_to_do);
-    console.log("VALUES ATM : ", profilequest[0].values.length + 1);
+    console.log("PROFILE QUEST : ", profilequests);
+    profilequests.map(async profilequest => {
+      const { data: quest } = await supabaseClient
+        .from("quests")
+        .select("*")
+        .match({ id: profilequest.quest_id });
 
-    if (quest[0].number_to_do === profilequest[0].values.length + 1) {
-      const { error } = await supabaseClient
-        .from("profilesquests")
-        .update({
-          values: [...profilequest[0].values, message],
-        })
-        .eq("id", profilequest[0].id);
-      setDisplayModalQuestSuccess(true);
-      console.log("FINISHED");
+      console.log("QUEST : ", quest[0]);
+
+      if (quest[0].number_to_do === profilequest.values.length + 1) {
+        const { error } = await supabaseClient
+          .from("profilesquests")
+          .update({
+            values: [...profilequest.values, message],
+          })
+          .eq("id", profilequest.id);
+        setDisplayModalQuestSuccess(true);
+        console.log("FINISHED");
+      } else {
+        const { error } = await supabaseClient
+          .from("profilesquests")
+          .update({
+            values: [...profilequest.values, message],
+          })
+          .eq("id", profilequest.id);
+        console.log("NOT FINISHED");
+      }
+    });
+    if (conversationId === null) {
+      const { error } = await supabaseClient.from("messages").insert({
+        content: message,
+        profile_id: user.id,
+        username: user.username,
+        fullname: user.full_name,
+      });
     } else {
-      const { error } = await supabaseClient
-        .from("profilesquests")
-        .update({
-          values: [...profilequest[0].values, message],
-        })
-        .eq("id", profilequest[0].id);
-      console.log("NOT FINISHED");
+      const { error } = await supabaseClient.from("messages").insert({
+        content: message,
+        profile_id: user.id,
+        username: user.username,
+        fullname: user.full_name,
+        conversation_id: conversationId,
+      });
     }
-    // if (conversationId === null) {
-    //   const { error } = await supabaseClient.from("messages").insert({
-    //     content: message,
-    //     profile_id: user.id,
-    //     username: user.username,
-    //     fullname: user.full_name,
-    //   });
-    // } else {
-    //   const { error } = await supabaseClient.from("messages").insert({
-    //     content: message,
-    //     profile_id: user.id,
-    //     username: user.username,
-    //     fullname: user.full_name,
-    //     conversation_id: conversationId,
-    //   });
-    // }
   };
 
   const handleChange = event => {
@@ -332,7 +334,6 @@ const Chat = () => {
 
                 <Button text="Démarrer la discussion" type="submit" />
               </form>
-              <Lottie animationData={json} />;
             </div>
           </div>
         </div>
@@ -375,6 +376,10 @@ const Chat = () => {
               />
             </div>
           </div>
+          <Lottie
+            animationData={confetti}
+            style={{ width: "auto", height: "200px" }}
+          />
         </div>
       </CustomModal>
       <div className="flex flex-col space-y-4">
