@@ -163,7 +163,7 @@ const Clients = () => {
                       htmlFor="fileName"
                       className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                     >
-                      Name
+                      Image Client
                     </label>
                     <input
                       type="file"
