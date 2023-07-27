@@ -55,3 +55,20 @@ a {
 li {
   list-style: none;
 }
+
+.tableau {
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 2em;
+  margin-bottom: 2em;
+  width: 60%;
+  border-collapse: collapse;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1.2em;
+}
+
+.tableau:hover {
+  box-shadow: crimson 0px 0px 40px 0px;
+  cursor: pointer;
+}
