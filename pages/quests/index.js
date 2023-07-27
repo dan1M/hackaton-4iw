@@ -388,7 +388,7 @@ const templateDifficultyQuest = {
 
   medium: {
     xp: 50,
-    number_to_do: 50,
+    number_to_do: 5,
   },
 
   hard: {
