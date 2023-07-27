@@ -20,7 +20,7 @@ const Chat = () => {
   const [newConversationuser, setNewConversationUser] = useState();
 
   const [user, setUser] = useState([]);
-  const test = 1;
+
   const fetchMessages = async (id = 0) => {
     console.log("CONV ID : ", conversationId);
 
@@ -65,19 +65,12 @@ const Chat = () => {
   };
 
   useEffect(() => {
-    fetchMessages();
-  }, [conversationId]);
-
-  useEffect(() => {
     const user = JSON.parse(sessionStorage.getItem("user"));
-    console.log("USER : ", user);
     setUser(user);
 
     fetchMessages();
 
     fetchUsers();
-
-    fetchConversations();
 
     supabaseClient
       .channel("messages")
@@ -100,6 +93,18 @@ const Chat = () => {
       )
       .subscribe();
   }, []);
+
+  useEffect(() => {
+    if (user.id) {
+      console.log("USER : ", user);
+
+      fetchConversations();
+    }
+  }, [user.id]);
+
+  useEffect(() => {
+    fetchMessages();
+  }, [conversationId]);
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -275,7 +280,7 @@ const Chat = () => {
       </CustomModal>
 
       <div className="flex flex-col space-y-4">
-        <h1 className="text-2xl font-bold">Conversations</h1>
+        <h1 className="text-2xl font-bold">Conversation</h1>
         <div className="flex flex-col space-y-2">
           <div
             className="bg-gray-100 rounded-lg p-3 w-1/6"
