@@ -25,19 +25,19 @@ const Sidebar = () => {
               height={20}
               className='mx-4'
             />
-            <Link href='/social'>Social</Link>
+            <Link href='/users'>Social</Link>
           </li>
           <li className='flex items-center justify-center space-x-2 li-side relative'>
             <div className='absolute h-2/3 w-1 rounded-md bg-secondary left-1/4'></div>
-            <Link href='#'>Chat</Link>
+            <Link href='/chat'>Chat</Link>
           </li>
           <li className='flex items-center justify-center space-x-2 li-side relative'>
             <div className='absolute h-2/3 w-1 rounded-md bg-secondary left-1/4'></div>
-            <Link href='#'>Evènements</Link>
+            <Link href='/events'>Evènements</Link>
           </li>
           <li className='flex items-center justify-center space-x-2 li-side relative'>
             <div className='absolute h-2/3 w-1 rounded-md bg-secondary left-1/4'></div>
-            <Link href='#'>Quètes</Link>
+            <Link href='/quests'>Quètes</Link>
           </li>
           <li className='flex items-center space-x-2 li-side'>
             <Image
