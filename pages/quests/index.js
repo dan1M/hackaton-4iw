@@ -71,6 +71,14 @@ const Quests = () => {
 
   const fetchQuests = async () => {
     const { data } = await supabaseClient.from("quests").select("*");
+
+    const user = JSON.parse(sessionStorage.getItem("user"));
+    const { data: test } = await supabaseClient
+      .from("profilesquests")
+      .select("*")
+      .match({ profile_id: user.id });
+
+    console.log(test);
     setQuests(data);
   };
 
@@ -134,11 +142,7 @@ const Quests = () => {
 
   return (
     <main className="p-4">
-      <Button
-        text="Ajouter une quete"
-        onClick={handleOpenModalCustom}
-      />
-
+      <Button text="Ajouter une quete" onClick={handleOpenModalCustom} />*
       <CustomModal
         isOpen={isModalCustomOpen}
         onRequestClose={handleCloseModalCustom}
@@ -345,7 +349,6 @@ const Quests = () => {
               key={quest.id}
               id={quest.id}
               title={quest.name}
-              imageUrl={"next.svg"}
               triggerFetch={id => {
                 if (id) {
                   setQuests(quests.filter(quest => quest.id !== id));
