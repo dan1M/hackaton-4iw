@@ -124,22 +124,28 @@ function Card({
                     <>
                       <li>
                         <a
-                          onClick={() => setDisplayModalEdit(true)}
+                          onClick={() => {
+                            setDisplayModalEdit(true);
+                            setShowDrown(false);
+                          }}
                           href="#"
                           className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
                         >
-                          Edit
+                          Modifier
                         </a>
                       </li>
                     </>
                   )}
                 <li>
                   <a
-                    onClick={() => setDisplayModalDelete(true)}
+                    onClick={() => {
+                      setShowDrown(false);
+                      setDisplayModalDelete(true);
+                    }}
                     href="#"
                     className="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600  dark:hover:text-white"
                   >
-                    Delete
+                    Supprimer
                   </a>
                 </li>
               </ul>

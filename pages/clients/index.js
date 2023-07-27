@@ -105,7 +105,7 @@ const Clients = () => {
     setSelectedImage(file);
   };
   return (
-    <main className="p-4">
+    <main className="p-4 w-full">
       <Button text="Ajouter un client" onClick={handleOpenModal} />
 
       <CustomModal
@@ -189,7 +189,7 @@ const Clients = () => {
             <Card
               key={client.id}
               id={client.id}
-              title={client.name}
+              title={`Client : ${client.name}`}
               imageUrl={client.imageUrl}
               triggerFetch={id => {
                 if (id) {
