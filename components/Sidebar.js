@@ -4,7 +4,7 @@ import Link from 'next/link';
 const Sidebar = () => {
   return (
     <nav
-      className='sm:w-1/5 w-1/5 sidebar h-screen'
+      className='w-1/5 sidebar h-screen'
       style={{
         boxShadow: '1px 1px 5px black',
         borderRadius: '5px',
