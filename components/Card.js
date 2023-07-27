@@ -319,9 +319,20 @@ function Card({
                   setDisplayModalEdit(false);
                 }}
               />
+            ) : type === "list" ? (
+              <FormList
+                id={id}
+                triggerFetch={() => {
+                  triggerFetch();
+                  setDisplayModalEdit(false);
+                }}
+              
+              />
             ) : (
               <></>
             )}
+
+            
           </div>
         </div>
       </CustomModal>
