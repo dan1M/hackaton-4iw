@@ -7,28 +7,18 @@ import { AppContext } from '@/pages/_app';
 export default function RpgZone() {
   const { supabaseClient } = useSessionContext();
   const { currentUser, updateCurrentUser } = useContext(AppContext);
-  const [actualLvl, setActualLvl] = useState(1);
   const [actualXp, setActualXp] = useState(0);
   const XP_PER_LVL = 100;
 
   useEffect(() => {
     if (currentUser) {
-      setActualLvl(currentUser.lvl_global);
-      setActualXp(currentUser.xp_global);
+      calculateActualXp(currentUser.xp_global, currentUser.lvl_global);
     }
   }, [currentUser]);
 
-  const calculateXp = () => {
-    //TODO
-    const xpToAdd = 10;
-    const newActualXp = actualXp + xpToAdd;
-    const newActualLvl = actualLvl;
-    if (newActualXp >= XP_PER_LVL) {
-      setActualLvl(newActualLvl + 1);
-      setActualXp(newActualXp - XP_PER_LVL);
-    } else {
-      setActualXp(newActualXp);
-    }
+  const calculateActualXp = (xpGlobal, actual_lvl) => {
+    const actualXp = xpGlobal - (actual_lvl - 1) * XP_PER_LVL;
+    setActualXp(actualXp);
   };
 
   const addXpToUser = async () => {
@@ -65,18 +55,18 @@ export default function RpgZone() {
         <div className='w-full'>
           <div className='w-full bg-gray-200 rounded-full h-3 dark:bg-gray-700 relative'>
             <div
-              className='bg-green-600 h-3 rounded-full dark:bg-green-500 relative'
+              className='bg-green-600 h-3 rounded-full dark:bg-green-500 relative transition-all duration-300'
               style={{
-                width: `${
-                  currentUser && (currentUser.xp_global / XP_PER_LVL) * 100
-                }%`,
+                width: `${(actualXp / XP_PER_LVL) * 100}%`,
+                maxWidth: '100%',
               }}
             >
-              {currentUser && currentUser.xp_global > 0 && (
-                <p className='text-xs mr-2 absolute right-0 top-0 leading-none text-white'>
-                  {currentUser && currentUser.xp_global}
-                </p>
-              )}
+              {(actualXp / XP_PER_LVL) * 100 > 0 &&
+                (actualXp / XP_PER_LVL) * 100 < 100 && (
+                  <p className='text-xs mr-2 absolute right-0 top-0 leading-none text-white'>
+                    {actualXp}
+                  </p>
+                )}
             </div>
             <p className='text-xs mr-2 absolute right-0 top-0 leading-none text-white'>
               {XP_PER_LVL}
