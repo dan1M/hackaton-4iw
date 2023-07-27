@@ -151,9 +151,9 @@ function Card({
             <Image
               className="w-24 h-24 mb-3 rounded-full shadow-lg"
               src={imageUrl}
-              alt="Bonnie image"
-              width={20}
-              height={20}
+              alt="Image"
+              width={50}
+              height={50}
             />
           )}
 
