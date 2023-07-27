@@ -21,48 +21,8 @@ function Card({
   const [displayModalDelete, setDisplayModalDelete] = useState(false);
   const [displayModalEdit, setDisplayModalEdit] = useState(false);
   const [showDropdown, setShowDrown] = useState(false);
-  const [inscription, setInscription] = useState(false);
   const { supabaseClient } = useSessionContext();
   const router = useRouter();
-  const handleRegisterEvent = async (eventId) => {
-    try {
-      if (!user) {
-        console.log('User is not logged in. Please log in to register for the event.');
-        return;
-      }
-
-      const { data: profileData, error: profileError } = await supabaseClient
-        .from('profiles')
-        .select('id')
-        .eq('email', user.email)
-        .single();
-
-      if (profileError) {
-        console.error('Error fetching user profile:', profileError);
-        return;
-      }
-
-      const profileId = profileData.id;
-
-      if (isUserRegisteredForEvent(eventId)) {
-        console.log('User is already registered for this event.');
-        return;
-      }
-
-      const { data: registrationData, error: registrationError } = await supabaseClient
-        .from('profilesevents')
-        .insert([{ event_id: eventId, profile_id: profileId }]);
-
-      if (registrationData) {
-        console.log('User registered for the event successfully!');
-        fetchEvents();
-      } else {
-        console.error('Error registering user for the event:', registrationError);
-      }
-    } catch (error) {
-      console.error('Error registering user for the event:', error.message);
-    }
-  };
 
   const customStyles = {
     content: {
@@ -238,22 +198,7 @@ function Card({
             <span className='text-sm text-gray-500 dark:text-gray-400'>
               {subtitle}
             </span>
-            <div className='flex mt-4 space-x-3 md:mt-6'>{type !== "user" &&
-              title !== "Parler" &&
-              title !== "Visiter Profil" && (
-                <Button
-                  text="Modifier"
-                  onClick={() => setDisplayModalEdit(true)}
-                />
-              )}
-
-            <Button
-              text="Supprimer"
-              onClick={() => setDisplayModalDelete(true)}
-            />
-             {type === "event" && !inscription && (
-           <Button text="S'inscrire" onClick={() => handleRegisterEvent(id)} />
-       )}</div>
+            <div className='flex mt-4 space-x-3 md:mt-6'></div>
           </div>
         </div>
       </div>
@@ -303,7 +248,6 @@ function Card({
                 onClick={() => setDisplayModalDelete(false)}
               />
             </div>
-            
           </div>
         </div>
       </CustomModal>
@@ -375,20 +319,9 @@ function Card({
                   setDisplayModalEdit(false);
                 }}
               />
-            ) : type === "list" ? (
-              <FormList
-                id={id}
-                triggerFetch={() => {
-                  triggerFetch();
-                  setDisplayModalEdit(false);
-                }}
-              
-              />
             ) : (
               <></>
             )}
-
-            
           </div>
         </div>
       </CustomModal>

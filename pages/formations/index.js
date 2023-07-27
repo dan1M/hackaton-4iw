@@ -1,3 +1,4 @@
+
 import Button from '@/components/Button';
 import Card from '@/components/Card';
 import { useSessionContext } from '@supabase/auth-helpers-react';
@@ -13,9 +14,9 @@ const Formations = () => {
   const [formations, setFormations] = useState([]);
 
   const [formData, setFormData] = useState({
-    name: '',
-    place: '',
-    duraiton: '',
+    name: "",
+    place: "",
+    duration: 0,
   });
 
   const customStyles = {
@@ -68,12 +69,18 @@ const Formations = () => {
     const { error } = await supabaseClient.from('formations').insert({
       name: formData.name,
       place: formData.place,
+      status: formData.status,
       duration: formData.duration,
     });
     handleCloseModal();
     fetchFormations();
   };
+  const user = typeof window !== 'undefined' ? JSON.parse(sessionStorage.getItem('user')) : null;
+  const role = user?.role;
+  console.log(role);
 
+  const isRole = role === 'mgr' || role === 'rh';
+  
   return (
     <main className='p-4 w-4/5'>
       <Title text='Formations' />
@@ -193,6 +200,7 @@ const Formations = () => {
         })}
       </div>
     </main>
+
   );
 };
 
