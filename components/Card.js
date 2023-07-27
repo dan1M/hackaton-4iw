@@ -52,6 +52,13 @@ function Card({
             .eq("id", id);
           if (error) console.log(error);
           break;
+        case "list":
+          const { error5 } = await supabaseClient
+            .from("lists")
+            .delete()
+            .eq("id", id);
+          if (error5) console.log(error5);
+          break;
         case "user":
           const { error1 } = await supabaseClient
             .from("profiles")
@@ -75,7 +82,6 @@ function Card({
           break;
         case "quests":
           const { error4 } = await supabaseClient
-
             .from("quests")
             .delete()
             .eq("id", id);
@@ -282,9 +288,20 @@ function Card({
                   setDisplayModalEdit(false);
                 }}
               />
+            ) : type === "list" ? (
+              <FormList
+                id={id}
+                triggerFetch={() => {
+                  triggerFetch();
+                  setDisplayModalEdit(false);
+                }}
+              
+              />
             ) : (
               <></>
             )}
+
+            
           </div>
         </div>
       </CustomModal>
