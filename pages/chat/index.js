@@ -249,12 +249,7 @@ const Chat = () => {
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <Button
-        text="Nouvelle discussion"
-        type="submit"
-        onClick={handleOpenModal}
-      />
+    <div className="container mx-auto p-4 flex">
       <CustomModal
         isOpen={isModalOpen}
         onRequestClose={handleCloseModal}
@@ -383,15 +378,20 @@ const Chat = () => {
         </div>
       </CustomModal>
       <div className="flex flex-col space-y-4">
-        <h1 className="text-2xl font-bold">Conversation</h1>
+        <Button
+          text="Nouvelle discussion"
+          type="submit"
+          onClick={handleOpenModal}
+        />
+        <h1 className="text-2xl font-bold text-white">Conversations</h1>
         <div className="flex flex-col space-y-2">
           <div
-            className="bg-gray-100 rounded-lg p-3 w-1/6"
+            className="bg-carbon-blue rounded-lg p-3"
             onClick={() => {
               setConversationId(null);
             }}
           >
-            <div className="text-sm text-gray-800 font-semibold text-center flex items-center h-full">
+            <div className="text-sm text-white dark:bg-blue-carbon font-semibold text-center flex items-center h-full">
               <p className="m-auto">Entreprise</p>
             </div>
           </div>
@@ -406,8 +406,8 @@ const Chat = () => {
             ))}
         </div>
       </div>
-      <div className="max-w-lg mx-auto bg-white shadow rounded-lg">
-        <div className="p-4">
+      <div className="max-w-lg ml-36 mt-24 bg-primary shadow rounded-lg">
+        <div className="p-4 max-h-96 overflow-y-auto">
           {messages &&
             messages.map(msg => (
               <Message

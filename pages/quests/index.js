@@ -141,7 +141,7 @@ const Quests = () => {
   };
 
   return (
-    <main className="p-4">
+    <main className="p-4 w-full">
       <Button text="Ajouter une quete" onClick={handleOpenModalCustom} />*
       <CustomModal
         isOpen={isModalCustomOpen}
