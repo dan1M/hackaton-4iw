@@ -5,7 +5,7 @@ import CustomModal from '@/components/CustomModal';
 import { useSessionContext } from '@supabase/auth-helpers-react';
 
 const Event = () => {
-  const { user, supabaseClient } = useSessionContext();
+  const {supabaseClient } = useSessionContext();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [evenements, setEvenements] = useState([]);
@@ -40,6 +40,8 @@ const Event = () => {
     }));
   };
 
+
+
   const customStyles = {
     content: {
       top: '50%',
@@ -67,50 +69,6 @@ const Event = () => {
     fetchEvents();
   };
 
-  const isUserRegisteredForEvent = (eventId) => {
-    return evenements.some((evenement) => evenement.id === eventId && evenement.registered);
-  };
-
-  const handleRegisterEvent = async (eventId) => {
-    try {
-      if (!user) {
-        console.log('User is not logged in. Please log in to register for the event.');
-        return;
-      }
-  
-      const { data: profileData, error: profileError } = await supabaseClient
-        .from('profiles')
-        .select('id')
-        .eq('email', user.email)
-        .single();
-  
-      if (profileError) {
-        console.error('Error fetching user profile:', profileError);
-        return;
-      }
-  
-      console.log('User profile:', profileData);
-      const profileId = profileData.id;
-  
-      if (isUserRegisteredForEvent(eventId)) {
-        console.log('User is already registered for this event.');
-        return;
-      }
-  
-      const { data: registrationData, error: registrationError } = await supabaseClient
-        .from('profilesevents')
-        .insert([{ event_id: eventId, profile_id: profileId }]);
-  
-      if (registrationData) {
-        console.log('User registered for the event successfully!');
-        fetchEvents();
-      } else {
-        console.error('Error registering user for the event:', registrationError);
-      }
-    } catch (error) {
-      console.error('Error registering user for the event:', error.message);
-    }
-  };
   
 
   return (

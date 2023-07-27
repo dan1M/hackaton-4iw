@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Button from '@/components/Button';
 import Card from '@/components/Card';
 import CustomModal from '@/components/CustomModal';
@@ -8,17 +8,14 @@ const Projects = () => {
   const { supabaseClient } = useSessionContext();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isAssociateModalOpen, setIsAssociateModalOpen] = useState(false); 
-
-
+  const [isAssociateModalOpen, setIsAssociateModalOpen] = useState(false);
   const [projects, setProjects] = useState([]);
   const [clients, setClients] = useState([]);
   const [users, setUsers] = useState([]);
   const [formData, setFormData] = useState({
     name: '',
     client_id: '',
-    user_id: '',
-
+    user_ids: [],
   });
 
   useEffect(() => {
@@ -64,14 +61,14 @@ const Projects = () => {
       if (error) {
         console.error('Error fetching users:', error);
       }
-    }
-    catch (error) {
+    } catch (error) {
       console.error('Error fetching users:', error.message);
     }
   };
-  const { user } = supabaseClient.auth;
+
+  const user = typeof window !== 'undefined' ? JSON.parse(sessionStorage.getItem('user')) : null;
   const role = user?.role;
-  
+  console.log(role);
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -82,11 +79,11 @@ const Projects = () => {
   };
 
   const handleOpenAssociateModal = () => {
-    setIsAssociateModalOpen(true); 
+    setIsAssociateModalOpen(true);
   };
 
   const handleCloseAssociateModal = () => {
-    setIsAssociateModalOpen(false); 
+    setIsAssociateModalOpen(false);
   };
 
   const handleChange = (e) => {
@@ -102,9 +99,7 @@ const Projects = () => {
     try {
       const { data: projectData, error: projectError } = await supabaseClient
         .from('projects')
-        .insert([
-          { name: formData.name, client_id: formData.client_id },
-        ]);
+        .insert([{ name: formData.name, client_id: formData.client_id }]);
 
       if (projectData) {
         console.log('Project added successfully!');
@@ -175,6 +170,7 @@ const Projects = () => {
   };
 
 
+
   const customStyles = {
     content: {
       top: '50%',
@@ -197,18 +193,23 @@ const Projects = () => {
 
   return (
     <main className="p-4">
+      <div>
+
       {(role === 'mgr' || role === 'rh') && (
         <Button text="Ajouter un projet" onClick={handleOpenModal} />
       )}
+      </div>
 
+
+      <div>
       {(role === 'mgr' || role === 'rh') && (
-        <Button
-          text="Associer un projet aux développeurs"
-          onClick={handleOpenAssociateModal}
-        />
-      )}
-
-
+              <Button
+                text="Associer un projet aux développeurs"
+                onClick={handleOpenAssociateModal}
+              />
+            )}
+          
+      </div>
 
       {/* Formulaire pour ajouter un projet */}
       <CustomModal

@@ -14,6 +14,8 @@ const Clients = () => {
     name: '',
   });
 
+  const user = typeof window !== 'undefined' ? JSON.parse(sessionStorage.getItem('user')) : null;
+  
   const customStyles = {
     content: {
       top: '50%',
@@ -67,6 +69,8 @@ const Clients = () => {
     handleCloseModal();
     fetchClients();
   };
+
+  
 
   return (
     <main className='p-4'>
@@ -131,7 +135,7 @@ const Clients = () => {
           </div>
         </div>
       </CustomModal>
-      <div className='flex flex-wrap'>
+      <div className='flex flex-wrap justify-center'>
         {clients?.map((client) => {
           return (
             <Card

@@ -15,7 +15,6 @@ export default function Profile() {
   const [activePage, setActivePage] = useState('infos');
 
   const fetchProfile = async () => {
-    console.log('fetching profile:', id);
     const { data, error } = await supabaseClient
       .from('profiles')
       .select()
@@ -23,13 +22,13 @@ export default function Profile() {
       .single();
 
     if (data) {
-      console.log('profile:', data);
+      console.log(data);
       setProfile(data);
     }
   };
 
   useEffect(() => {
-    fetchProfile();
+    if (id) fetchProfile();
   }, [id]);
 
   return (
@@ -43,32 +42,35 @@ export default function Profile() {
             width={20}
             height={20}
           />
-          <h2 className='text-white text-3xl font-semibold ml-4'>
-            {profile?.full_name}
-          </h2>
+          <div className='ml-4'>
+            <h2 className='text-white text-3xl font-semibold '>
+              {profile?.full_name}
+            </h2>
+            <p className='text-sm text-slate-400 mt-1'>{profile?.job_title}</p>
+          </div>
         </div>
       </div>
       <div className='w-full max-w-xl h-1/3 flex-col mx-auto mt-24 justify-center'>
-        <ul class='flex justify-center text-sm font-medium text-center text-gray-500 dark:text-white'>
-          <li class='mr-2'>
+        <ul className='flex justify-center text-sm font-medium text-center text-gray-500 dark:text-white'>
+          <li className='mr-2'>
             <Button
               type={activePage === 'infos' ? 'active' : 'unstyled'}
               onClick={() => setActivePage('infos')}
               text='Infos'
             />
           </li>
-          <li class='mr-2'>
+          <li className='mr-2'>
             <Button
               type={activePage === 'skill' ? 'active' : 'unstyled'}
               onClick={() => setActivePage('skill')}
               text='Compétences'
             />
           </li>
-          <li class='mr-2'>
+          <li className='mr-2'>
             <Button
               onClick={() => setActivePage('quest')}
               type={activePage === 'quest' ? 'active' : 'unstyled'}
-              text='Activités accomplies'
+              text='Quêtes accomplies'
             />
           </li>
         </ul>
