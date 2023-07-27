@@ -217,7 +217,7 @@ const Users = () => {
               id={user.id}
               title={user.full_name}
               subtitle={user.job_title}
-              imageUrl={'next.svg'}
+              imageUrl={'/next.svg'}
               triggerFetch={(id) => {
                 if (id) {
                   setUsers(users.filter((user) => user.id !== id));

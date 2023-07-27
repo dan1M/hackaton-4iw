@@ -1,16 +1,13 @@
+import { AppContext } from '@/pages/_app';
 import { useSessionContext } from '@supabase/auth-helpers-react';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
 export default function ProfileSkills({ profile }) {
-  const [user, setUser] = useState(null);
+  const { currentUser } = useContext(AppContext);
   const { supabaseClient } = useSessionContext();
   const [profileSkills, setProfileSkills] = useState([]);
   const [newSkillName, setNewSkillName] = useState('');
   const [isAdding, setIsAdding] = useState(false);
-
-  useEffect(() => {
-    setUser(JSON.parse(sessionStorage.getItem('user')));
-  }, []);
 
   useEffect(() => {
     if (profile) fetchProfileSkills();

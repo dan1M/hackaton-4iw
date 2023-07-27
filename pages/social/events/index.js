@@ -4,23 +4,23 @@ import { useSessionContext } from '@supabase/auth-helpers-react';
 import { useEffect, useState } from 'react';
 import CustomModal from '@/components/CustomModal';
 
-const Projects = () => {
+const Event = () => {
   const { supabaseClient } = useSessionContext();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [projects, setProjects] = useState([]);
+  const [evenements, setEvenements] = useState([]);
 
   const [formData, setFormData] = useState({
     name: '',
   });
 
   useEffect(() => {
-    fetchProjects();
+    fetchEvents();
   }, []);
 
-  const fetchProjects = async () => {
-    const { data } = await supabaseClient.from('projects').select('*');
-    setProjects(data);
+  const fetchEvents = async () => {
+    const { data } = await supabaseClient.from('events').select('*');
+    setEvenements(data);
   };
 
   const handleOpenModal = () => {
@@ -37,15 +37,6 @@ const Projects = () => {
       ...prevData,
       [name]: value,
     }));
-  };
-
-  const handleCreateUser = async (e) => {
-    e.preventDefault();
-    const { error } = await supabaseClient
-      .from('projects')
-      .insert({ name: formData.name });
-    handleCloseModal();
-    fetchProjects();
   };
 
   const customStyles = {
@@ -68,9 +59,18 @@ const Projects = () => {
     },
   };
 
+  const handleCreateEvent = async (e) => {
+    e.preventDefault();
+    const { error } = await supabaseClient
+      .from('events')
+      .insert({ name: formData.name });
+    handleCloseModal();
+    fetchEvents();
+  };
+
   return (
     <main className='p-4'>
-      <Button text='Ajouter un projet' onClick={handleOpenModal} />
+      <Button text='Ajouter un évènement' onClick={handleOpenModal} />
 
       <CustomModal
         isOpen={isModalOpen}
@@ -102,9 +102,9 @@ const Projects = () => {
             </button>
             <div className='px-6 py-6 lg:px-8'>
               <h3 className='mb-4 text-xl font-medium text-gray-900 dark:text-white'>
-                Ajouter un projet
+                Ajouter un évènement
               </h3>
-              <form className='space-y-6' onSubmit={handleCreateUser}>
+              <form className='space-y-6' onSubmit={handleCreateEvent}>
                 <div>
                   <label
                     htmlFor='name'
@@ -123,28 +123,30 @@ const Projects = () => {
                   />
                 </div>
 
-                <Button text='Ajouter un project' type='submit' />
+                <Button text='Ajouter un évènement' type='submit' />
               </form>
             </div>
           </div>
         </div>
       </CustomModal>
       <div className='flex flex-wrap'>
-        {projects?.map((project) => {
+        {evenements?.map((evenement) => {
           return (
             <Card
-              key={project.id}
-              id={project.id}
-              title={project.name}
+              key={evenement.id}
+              id={evenement.id}
+              title={evenement.name}
               imageUrl={'/next.svg'}
               triggerFetch={(id) => {
                 if (id) {
-                  setProjects(projects.filter((project) => project.id !== id));
+                  setEvenements(
+                    evenements.filter((evenement) => evenement.id !== id)
+                  );
                 } else {
-                  fetchProjects();
+                  fetchEvents();
                 }
               }}
-              type='project'
+              type='event'
             />
           );
         })}
@@ -153,4 +155,4 @@ const Projects = () => {
   );
 };
 
-export default Projects;
+export default Event;
