@@ -81,6 +81,12 @@ const Users = () => {
         }}
       />
 
+        <Button
+          text='Ajouter un utilisateur'
+          onClick={() => setDisplayNewUser(true)}
+        />
+  
+      
       <CustomModal
         isOpen={displayNewUser}
         onRequestClose={() => setDisplayNewUser(false)}
