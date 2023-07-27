@@ -3,7 +3,7 @@ import Card from "@/components/Card";
 import { useSessionContext } from "@supabase/auth-helpers-react";
 import { useEffect, useState } from "react";
 import CustomModal from "@/components/CustomModal";
-import Sidebar from "@/components/Sidebar";
+
 
 const Formations = () => {
   const { supabaseClient } = useSessionContext();
@@ -14,7 +14,7 @@ const Formations = () => {
   const [formData, setFormData] = useState({
     name: "",
     place: "",
-    duraiton: "",
+    duration: 0,
   });
 
   const customStyles = {
@@ -67,15 +67,21 @@ const Formations = () => {
     const { error } = await supabaseClient.from("formations").insert({
       name: formData.name,
       place: formData.place,
+      status: formData.status,
       duration: formData.duration,
     });
     handleCloseModal();
     fetchFormations();
   };
+  const user = typeof window !== 'undefined' ? JSON.parse(sessionStorage.getItem('user')) : null;
+  const role = user?.role;
+  console.log(role);
 
+  const isRole = role === 'mgr' || role === 'rh';
+  
   return (
     <main className="p-4">
-      <Button text="Ajouter une formation" onClick={handleOpenModal} />
+        <Button text="Ajouter une formation" onClick={handleOpenModal} />
 
       <CustomModal
         isOpen={isModalOpen}
@@ -175,6 +181,8 @@ const Formations = () => {
               key={formation.id}
               id={formation.id}
               title={formation.name}
+              status={formation.status}
+              duration={formation.duration}
               imageUrl={"next.svg"}
               triggerFetch={id => {
                 if (id) {
@@ -191,6 +199,7 @@ const Formations = () => {
         })}
       </div>
     </main>
+
   );
 };
 
