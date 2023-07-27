@@ -8,6 +8,9 @@ const Projects = () => {
   const { supabaseClient } = useSessionContext();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAssociateModalOpen, setIsAssociateModalOpen] = useState(false); 
+
+
   const [projects, setProjects] = useState([]);
   const [clients, setClients] = useState([]);
   const [users, setUsers] = useState([]);
@@ -15,6 +18,7 @@ const Projects = () => {
     name: '',
     client_id: '',
     user_id: '',
+
   });
 
   useEffect(() => {
@@ -60,10 +64,14 @@ const Projects = () => {
       if (error) {
         console.error('Error fetching users:', error);
       }
-    } catch (error) {
+    }
+    catch (error) {
       console.error('Error fetching users:', error.message);
     }
   };
+  const { user } = supabaseClient.auth;
+  const role = user?.role;
+  
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -71,6 +79,14 @@ const Projects = () => {
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
+  };
+
+  const handleOpenAssociateModal = () => {
+    setIsAssociateModalOpen(true); 
+  };
+
+  const handleCloseAssociateModal = () => {
+    setIsAssociateModalOpen(false); 
   };
 
   const handleChange = (e) => {
@@ -92,25 +108,6 @@ const Projects = () => {
 
       if (projectData) {
         console.log('Project added successfully!');
-
-        // Now, associate the selected user with the newly created project
-        const projectId = projectData[0].id;
-        const userId = formData.user_id;
-
-        if (userId) {
-          const { data: associationData, error: associationError } = await supabaseClient
-            .from('profilesprojects')
-            .insert([
-              { id_profile: userId, id_project: projectId },
-            ]);
-
-          if (associationData) {
-            console.log('User associated with the project successfully!');
-          } else {
-            console.error('Error associating user with the project:', associationError);
-          }
-        }
-
         handleCloseModal();
         fetchProjects();
       } else {
@@ -139,6 +136,45 @@ const Projects = () => {
     }
   };
 
+  const handleAssociateChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleAssociateMultiSelectChange = (e) => {
+    const selectedOptions = Array.from(e.target.selectedOptions, (option) => option.value);
+    setFormData((prevData) => ({
+      ...prevData,
+      user_ids: selectedOptions,
+    }));
+  };
+
+  const handleAssociateProjectToDev = async (e) => {
+    e.preventDefault();
+    try {
+      const { data: associationData, error: associationError } = await supabaseClient
+        .from('profilesprojects')
+        .insert(formData.user_ids.map((user_id) => ({
+          id_profile: user_id,
+          id_project: formData.project_id,
+        })));
+
+      if (associationData) {
+        console.log('Users associated with the project successfully!');
+        handleCloseAssociateModal();
+        fetchProjects();
+      } else {
+        console.error('Error associating users with the project:', associationError);
+      }
+    } catch (error) {
+      console.error('Error associating users with the project:', error.message);
+    }
+  };
+
+
   const customStyles = {
     content: {
       top: '50%',
@@ -161,8 +197,20 @@ const Projects = () => {
 
   return (
     <main className="p-4">
-      <Button text="Ajouter un projet" onClick={handleOpenModal} />
+      {(role === 'mgr' || role === 'rh') && (
+        <Button text="Ajouter un projet" onClick={handleOpenModal} />
+      )}
 
+      {(role === 'mgr' || role === 'rh') && (
+        <Button
+          text="Associer un projet aux développeurs"
+          onClick={handleOpenAssociateModal}
+        />
+      )}
+
+
+
+      {/* Formulaire pour ajouter un projet */}
       <CustomModal
         isOpen={isModalOpen}
         onRequestClose={handleCloseModal}
@@ -175,7 +223,7 @@ const Projects = () => {
               className="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
               onClick={handleCloseModal}
             >
-           <svg
+              <svg
                 className='w-3 h-3'
                 xmlns='http://www.w3.org/2000/svg'
                 fill='none'
@@ -238,35 +286,96 @@ const Projects = () => {
                   </select>
                 </div>
 
-                {/* Liste déroulante pour sélectionner un utilisateur (rh ou mgr) */}
-                {users.filter((user) => user.role === 'rh' || user.role === 'mgr').length > 0 && (
-                  <div>
-                    <label
-                      htmlFor="user"
-                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                    >
-                      Utilisateur associé (RH ou MGR)
-                    </label>
-                    <select
-                      id="user"
-                      name="user_id"
-                      onChange={handleChange}
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      required
-                    >
-                      <option value="">Sélectionner un utilisateur</option>
-                      {users
-                        .filter((user) => user.role === 'rh' || user.role === 'mgr')
-                        .map((user) => (
-                          <option key={user.id} value={user.id}>
-                            {user.full_name}
-                          </option>
-                        ))}
-                    </select>
-                  </div>
-                )}
-
                 <Button text="Ajouter un projet" type="submit" />
+              </form>
+            </div>
+          </div>
+        </div>
+      </CustomModal>
+
+      {/* Formulaire pour associer un projet aux développeurs */}
+      <CustomModal
+        isOpen={isAssociateModalOpen}
+        onRequestClose={handleCloseAssociateModal}
+        styles={customStyles}
+      >
+        <div className="relative w-full max-w-md max-h-full">
+          <div className="relative">
+            <button
+              type="button"
+              className="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+              onClick={handleCloseAssociateModal}
+            >
+              <svg
+                className='w-3 h-3'
+                xmlns='http://www.w3.org/2000/svg'
+                fill='none'
+                viewBox='0 0 14 14'
+              >
+                <path
+                  stroke='currentColor'
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  strokeWidth='2'
+                  d='m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6'
+                />
+              </svg>
+              <span className='sr-only'>Close modal</span>
+            </button>
+            <div className="px-6 py-6 lg:px-8">
+              <h3 className="mb-4 text-xl font-medium text-gray-900 dark:text-white">
+                Associer un projet aux développeurs
+              </h3>
+              <form className="space-y-6" onSubmit={handleAssociateProjectToDev}>
+                {/* Liste déroulante pour sélectionner un projet */}
+                <div>
+                  <label
+                    htmlFor="project"
+                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  >
+                    Projet à associer
+                  </label>
+                  <select
+                    id="project"
+                    name="project_id"
+                    onChange={handleAssociateChange}
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    required
+                  >
+                    <option value="">électionner un project pour les</option>
+                    {projects.map((project) => (
+                      <option key={project.id} value={project.id}>
+                        {project.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label
+                    htmlFor="project"
+                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  >
+                     Développeurs à associer
+                  </label>
+                  <select
+                    id="users"
+                    name="user_id"
+                    onChange={handleAssociateMultiSelectChange}
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    required
+                  >
+                    <option value="">électionner un developpeur ou plus</option>
+                    {users.map((user) => (
+                       <option key={user.username} value={user.id}>
+                       {user.username}
+                     </option>
+                    ))}
+                  </select>
+                </div>
+                <Button
+                  text="Associer le projet aux développeurs"
+                  type="submit"
+                />
               </form>
             </div>
           </div>
@@ -289,8 +398,10 @@ const Projects = () => {
             }}
             type="project"
           >
-            {/* Add a button to add a client to the project */}
-            <Button text="Ajouter un client" onClick={() => handleAddClientToProject(project.id)} />
+            <Button
+              text="Ajouter un client"
+              onClick={() => handleAddClientToProject(project.id)}
+            />
           </Card>
         ))}
       </div>

@@ -19,7 +19,47 @@ function Card({
 }) {
   const [displayModalDelete, setDisplayModalDelete] = useState(false);
   const [displayModalEdit, setDisplayModalEdit] = useState(false);
+  const [inscription, setInscription] = useState(false);
   const { supabaseClient } = useSessionContext();
+  const handleRegisterEvent = async (eventId) => {
+    try {
+      if (!user) {
+        console.log('User is not logged in. Please log in to register for the event.');
+        return;
+      }
+
+      const { data: profileData, error: profileError } = await supabaseClient
+        .from('profiles')
+        .select('id')
+        .eq('email', user.email)
+        .single();
+
+      if (profileError) {
+        console.error('Error fetching user profile:', profileError);
+        return;
+      }
+
+      const profileId = profileData.id;
+
+      if (isUserRegisteredForEvent(eventId)) {
+        console.log('User is already registered for this event.');
+        return;
+      }
+
+      const { data: registrationData, error: registrationError } = await supabaseClient
+        .from('profilesevents')
+        .insert([{ event_id: eventId, profile_id: profileId }]);
+
+      if (registrationData) {
+        console.log('User registered for the event successfully!');
+        fetchEvents();
+      } else {
+        console.error('Error registering user for the event:', registrationError);
+      }
+    } catch (error) {
+      console.error('Error registering user for the event:', error.message);
+    }
+  };
 
   const customStyles = {
     content: {
@@ -72,6 +112,7 @@ function Card({
             .eq("id", id);
           if (error3) console.log(error3);
           break;
+
         case "quests":
           const { error4 } = await supabaseClient
 
@@ -120,6 +161,10 @@ function Card({
               text="Supprimer"
               onClick={() => setDisplayModalDelete(true)}
             />
+             {type === "event" && !inscription && (
+           <Button text="S'inscrire" onClick={() => handleRegisterEvent(id)} />
+       )}
+        
           </div>
         </div>
       </div>
@@ -168,6 +213,7 @@ function Card({
                 onClick={() => setDisplayModalDelete(false)}
               />
             </div>
+            
           </div>
         </div>
       </CustomModal>

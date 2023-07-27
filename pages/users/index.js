@@ -3,6 +3,7 @@ import Card from '@/components/Card';
 import { useSessionContext } from '@supabase/auth-helpers-react';
 import { useEffect, useState } from 'react';
 import CustomModal from '@/components/CustomModal';
+import { supabase } from '@supabase/auth-ui-shared';
 
 const Users = () => {
   const { supabaseClient } = useSessionContext();
@@ -12,7 +13,7 @@ const Users = () => {
     email: '',
     password: '',
     full_name: '',
-    role: 'dev',
+    role: '',
     job_title: '',
   });
   useEffect(() => {
@@ -31,10 +32,9 @@ const Users = () => {
       [name]: value,
     }));
   };
-
   const handleCreateUser = async (e) => {
     e.preventDefault();
-    const { data, error } = await supabaseClient
+    const { data, error } = await supabaseClient 
       .from('profiles')
       .insert({
         email: formData.email,
@@ -43,13 +43,13 @@ const Users = () => {
         role: formData.role,
         job_title: formData.job_title,
       })
-      .select();
-
+      .select('*');
     if (data) {
       setDisplayNewUser(false);
       fetchUsers();
     }
   };
+  
 
   const customStyles = {
     content: {
@@ -73,13 +73,13 @@ const Users = () => {
 
   return (
     <main className='p-4'>
-      <Button
-        text='Ajouter un utilisateur'
-        onClick={() => {
-          setDisplayNewUser(!displayNewUser);
-        }}
-      />
 
+        <Button
+          text='Ajouter un utilisateur'
+          onClick={() => setDisplayNewUser(true)}
+        />
+  
+      
       <CustomModal
         isOpen={displayNewUser}
         onRequestClose={() => setDisplayNewUser(false)}

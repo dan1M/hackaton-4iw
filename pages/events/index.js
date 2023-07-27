@@ -1,4 +1,3 @@
-// Import des modules
 import { useState, useEffect } from 'react';
 import Button from '@/components/Button';
 import Card from '@/components/Card';
@@ -13,6 +12,7 @@ const Event = () => {
 
   const [formData, setFormData] = useState({
     name: '',
+    email: '',
   });
 
   useEffect(() => {
@@ -67,30 +67,42 @@ const Event = () => {
     fetchEvents();
   };
 
+  const isUserRegisteredForEvent = (eventId) => {
+    return evenements.some((evenement) => evenement.id === eventId && evenement.registered);
+  };
+
   const handleRegisterEvent = async (eventId) => {
     try {
-      // Vérifier si l'utilisateur est déjà inscrit à l'événement
-      const { data: existingRegistration } = await supabaseClient
-        .from('events_users')
-        .select('*')
-        .eq('event_id', eventId)
-        .eq('user_id', user.id);
-
-      if (existingRegistration && existingRegistration.length > 0) {
+      if (!user) {
+        console.log('User is not logged in. Please log in to register for the event.');
+        return;
+      }
+  
+      const { data: profileData, error: profileError } = await supabaseClient
+        .from('profiles')
+        .select('id')
+        .eq('email', user.email)
+        .single();
+  
+      if (profileError) {
+        console.error('Error fetching user profile:', profileError);
+        return;
+      }
+  
+      console.log('User profile:', profileData);
+      const profileId = profileData.id;
+  
+      if (isUserRegisteredForEvent(eventId)) {
         console.log('User is already registered for this event.');
         return;
       }
-
-      // Inscrire l'utilisateur à l'événement
+  
       const { data: registrationData, error: registrationError } = await supabaseClient
-        .from('events_users')
-        .insert([
-          { event_id: eventId, user_id: user.id },
-        ]);
-
+        .from('profilesevents')
+        .insert([{ event_id: eventId, profile_id: profileId }]);
+  
       if (registrationData) {
         console.log('User registered for the event successfully!');
-        // Actualiser la liste des événements pour refléter l'inscription
         fetchEvents();
       } else {
         console.error('Error registering user for the event:', registrationError);
@@ -99,27 +111,7 @@ const Event = () => {
       console.error('Error registering user for the event:', error.message);
     }
   };
-
-  const handleUnregisterEvent = async (eventId) => {
-    try {
-      // Désinscrire l'utilisateur de l'événement
-      const { data: unregistrationData, error: unregistrationError } = await supabaseClient
-        .from('events_users')
-        .delete()
-        .eq('event_id', eventId)
-        .eq('user_id', user.id);
-
-      if (unregistrationData) {
-        console.log('User unregistered from the event successfully!');
-        // Actualiser la liste des événements pour refléter la désinscription
-        fetchEvents();
-      } else {
-        console.error('Error unregistering user from the event:', unregistrationError);
-      }
-    } catch (error) {
-      console.error('Error unregistering user from the event:', error.message);
-    }
-  };
+  
 
   return (
     <main className="p-4">
@@ -182,6 +174,7 @@ const Event = () => {
           </div>
         </div>
       </CustomModal>
+
       <div className="flex flex-wrap">
         {evenements?.map((evenement) => {
           return (
@@ -199,21 +192,7 @@ const Event = () => {
               }}
               type="event"
             >
-              {/* Bouton pour s'inscrire ou se désinscrire à l'événement */}
-              {user ? (
-                <Button
-                  text="S'inscrire"
-                  onClick={() => handleRegisterEvent(evenement.id)}
-                />
-              ) : (
-                <p>Veuillez vous connecter pour vous inscrire à l'événement.</p>
-              )}
-              {user && (
-                <Button
-                  text="Se désinscrire"
-                  onClick={() => handleUnregisterEvent(evenement.id)}
-                />
-              )}
+             
             </Card>
           );
         })}
