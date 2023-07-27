@@ -1,5 +1,5 @@
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import CustomModal from "@/components/CustomModal";
 import Button from "./Button";
 import { useSessionContext } from "@supabase/auth-helpers-react";
@@ -13,15 +13,189 @@ function Card({
   id,
   title,
   subtitle,
+  status,
+  duration,
   imageUrl,
   triggerFetch,
   type = "default",
 }) {
   const [displayModalDelete, setDisplayModalDelete] = useState(false);
   const [displayModalEdit, setDisplayModalEdit] = useState(false);
+  const [inscription, setInscription] = useState(false);
   const [showDropdown, setShowDrown] = useState(false);
   const { supabaseClient } = useSessionContext();
 
+
+  const user = typeof window !== "undefined" ? JSON.parse(sessionStorage.getItem("user")) : null;
+  const role = user?.role;
+
+  const isRole = role === "mgr" || role === "rh";
+
+  useEffect(() => {
+    const fetchInscriptionStatus = async () => {
+      if (type === "event" && user) {
+        const isRegistered = await isUserRegisteredForEvent(id, user.id, supabaseClient);
+        setInscription(isRegistered);
+      } else if (type === "formation" && user) {
+        const isRegisteredFormation = await isUserRegisteredFormation(id, user.id, supabaseClient);
+        setInscription(isRegisteredFormation);
+      }
+    };
+    fetchInscriptionStatus();
+  }, [type, id, user, supabaseClient]);
+  
+
+  const isUserRegisteredForEvent = async (eventId, profileId, supabaseClient) => {
+    try {
+      const { data, error } = await supabaseClient
+        .from("profilesevents")
+        .select("*")
+        .eq("event_id", eventId)
+        .eq("profile_id", profileId)
+        .single();
+  
+      if (data) {
+        
+        return true;
+      } else {
+      
+        return false;
+      }
+    } catch (error) {
+      console.error("Error checking event registration:", error.message);
+      return false;
+    }
+  };
+ 
+  const handleRegisterEvent = async (eventId) => {
+    try {
+      if (!user) {
+        return;
+      }
+
+      const { data: profileData, error: profileError } = await supabaseClient
+        .from('profiles')
+        .select('id')
+        .eq('email', user.email)
+        .single();
+
+      if (profileError) {
+        console.error('Error fetching user profile:', profileError);
+        return;
+      }
+
+      const profileId = profileData?.id;
+
+      if (!profileId) {
+       
+        return;
+      }
+
+      if (await isUserRegisteredForEvent(eventId, profileId, supabaseClient)) {
+        const { data, error } = await supabaseClient
+          .from('profilesevents')
+          .delete()
+          .eq('event_id', eventId)
+          .eq('profile_id', profileId);
+
+        if (data) {
+         
+          setInscription(false);
+          fetchEvents();
+        } 
+      } else {
+        const { data, error } = await supabaseClient
+          .from('profilesevents')
+          .insert([{ event_id: eventId, profile_id: profileId }]);
+
+        if (data) {
+         
+          setInscription(true); 
+          fetchEvents();
+        } 
+      }
+    } catch (error) {
+      console.error('Error registering/unregistering user for the event:', error.message);
+    }
+  };
+
+
+
+  const isUserRegisteredFormation = async (formationId, profileId, supabaseClient) => {
+    try {
+      const { data, error } = await supabaseClient
+        .from("profilesformations") 
+        .select("*")
+        .eq("formation_id", formationId)
+        .eq("profile_id", profileId)
+        .single();
+  
+      if (data) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      console.error("Error checking formation registration:", error.message);
+      return false;
+    }
+  };
+  
+  
+  const handleRegisterFormation = async (formationId) => {
+    try {
+      if (!user) {
+        return;
+      }
+  
+      const { data: profileData, error: profileError } = await supabaseClient
+        .from('profiles')
+        .select('id')
+        .eq('email', user.email)
+        .single();
+  
+      if (profileError) {
+        console.error('Error fetching user profile:', profileError);
+        return;
+      }
+  
+      const profileId = profileData?.id;
+  
+      if (!profileId) {
+        return;
+      }
+  
+      const isRegistered = await isUserRegisteredFormation(formationId, profileId, supabaseClient);
+  
+      if (isRegistered) {
+        const { data, error } = await supabaseClient
+          .from('profilesformations')
+          .delete()
+          .eq('formation_id', formationId)
+          .eq('profile_id', profileId);
+  
+        if (data) {
+          setInscription(false);
+        } else {
+          console.error('Error unregistering user from the formation', error);
+        }
+      } else {
+        const { data, error } = await supabaseClient
+          .from('profilesformations')
+          .insert([{ formation_id: formationId, profile_id: profileId }]);
+  
+        if (data) {
+          setInscription(true);
+        } else {
+          console.error('Error registering user for the formation:', error);
+        }
+      }
+    } catch (error) {
+      console.error('Error registering/unregistering user for the formation', error.message);
+    }
+  };
+  
+  
   const customStyles = {
     content: {
       top: "50%",
@@ -152,6 +326,7 @@ function Card({
             </div>
           )}
         </div>
+       
         <div className="flex flex-col items-center pb-4 ">
           {imageUrl && (
             <Image
@@ -169,8 +344,42 @@ function Card({
           <span className="text-sm text-gray-500 dark:text-gray-400">
             {subtitle}
           </span>
-          <div className="flex mt-4 space-x-3 md:mt-6"></div>
+          {type === "formation" && (
+            <div>
+              <h5 className="mb-1 text-xl font-medium text-gray-900 dark:text-white">
+              {status}
+            </h5>
+            <span className="text-sm text-black  text-black text-center">
+             Durée:  {duration} Heures
+            </span>
+            </div>
+          )}
+         
         </div>
+        <div style={{ textAlign: "center", cursor: "pointer" }}>
+        {type === "event" && user && (
+          <Button
+            text={inscription ? "Se désinscrire" : "S'inscrire"}
+            onClick={() => handleRegisterEvent(id)}
+          />
+        )}
+        {type === "event" && !user && ( 
+          <p>Please log in to register for this event.</p>
+        )}
+      </div>
+        <div style={{ textAlign: "center", cursor: "pointer" }}>
+        {type === "formation" && user && (
+          <Button
+            text={inscription ? "Se désinscrire" : "S'inscrire"}
+            onClick={() => handleRegisterFormation(id)}
+          />
+        )}
+        {type === "formation" && !user && ( 
+          <p>Please log in to register for this event.</p>
+        )}
+      </div>
+      {/* for formation */}
+       
       </div>
       <CustomModal
         isOpen={displayModalDelete}

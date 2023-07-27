@@ -1,4 +1,4 @@
-import { defaultConfig } from "next/dist/server/config-shared";
+
 
 const Button = props => {
   const { text = "Soumettre", type = "default" } = props;

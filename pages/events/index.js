@@ -1,17 +1,18 @@
-import Button from "@/components/Button";
-import Card from "@/components/Card";
-import { useSessionContext } from "@supabase/auth-helpers-react";
-import { useEffect, useState } from "react";
-import CustomModal from "@/components/CustomModal";
+import { useState, useEffect } from 'react';
+import Button from '@/components/Button';
+import Card from '@/components/Card';
+import CustomModal from '@/components/CustomModal';
+import { useSessionContext } from '@supabase/auth-helpers-react';
 
 const Event = () => {
-  const { supabaseClient } = useSessionContext();
+  const {supabaseClient } = useSessionContext();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [evenements, setEvenements] = useState([]);
 
   const [formData, setFormData] = useState({
-    name: "",
+    name: '',
+    email: '',
   });
 
   useEffect(() => {
@@ -19,7 +20,7 @@ const Event = () => {
   }, []);
 
   const fetchEvents = async () => {
-    const { data } = await supabaseClient.from("events").select("*");
+    const { data } = await supabaseClient.from('events').select('*');
     setEvenements(data);
   };
 
@@ -31,42 +32,44 @@ const Event = () => {
     setIsModalOpen(false);
   };
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prevData => ({
+    setFormData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
   };
 
+
+
   const customStyles = {
     content: {
-      top: "50%",
-      left: "50%",
-      right: "auto",
-      bottom: "auto",
-      marginRight: "-50%",
-      transform: "translate(-50%, -50%)",
-      borderRadius: "8px",
-      padding: "20px",
-      border: "none",
-      maxWidth: "400px",
-      backgroundColor: "#282B2A",
+      top: '50%',
+      left: '50%',
+      right: 'auto',
+      bottom: 'auto',
+      marginRight: '-50%',
+      transform: 'translate(-50%, -50%)',
+      borderRadius: '8px',
+      padding: '20px',
+      border: 'none',
+      maxWidth: '400px',
+      backgroundColor: '#282B2A',
     },
     overlay: {
-      backgroundColor: "rgba(0, 0, 0, 0.6)",
+      backgroundColor: 'rgba(0, 0, 0, 0.6)',
       zIndex: 1000,
     },
   };
 
-  const handleCreateEvent = async e => {
+  const handleCreateEvent = async (e) => {
     e.preventDefault();
-    const { error } = await supabaseClient
-      .from("events")
-      .insert({ name: formData.name });
+    const { error } = await supabaseClient.from('events').insert({ name: formData.name });
     handleCloseModal();
     fetchEvents();
   };
+
+  
 
   return (
     <main className="p-4">
@@ -129,25 +132,26 @@ const Event = () => {
           </div>
         </div>
       </CustomModal>
+
       <div className="flex flex-wrap">
-        {evenements?.map(evenement => {
+        {evenements?.map((evenement) => {
           return (
             <Card
               key={evenement.id}
               id={evenement.id}
               title={evenement.name}
-              imageUrl={"next.svg"}
-              triggerFetch={id => {
+              imageUrl={'next.svg'}
+              triggerFetch={(id) => {
                 if (id) {
-                  setEvenements(
-                    evenements.filter(evenement => evenement.id !== id)
-                  );
+                  setEvenements(evenements.filter((evenement) => evenement.id !== id));
                 } else {
                   fetchEvents();
                 }
               }}
               type="event"
-            />
+            >
+             
+            </Card>
           );
         })}
       </div>
