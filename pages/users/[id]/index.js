@@ -22,7 +22,6 @@ export default function Profile() {
       .single();
 
     if (data) {
-      console.log(data);
       setProfile(data);
     }
   };

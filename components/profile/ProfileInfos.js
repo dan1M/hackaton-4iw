@@ -1,9 +1,10 @@
 import { useSessionContext } from '@supabase/auth-helpers-react';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Button from '../Button';
+import { AppContext } from '@/pages/_app';
 
 export default function ProfileInfos({ profile }) {
-  const [user, setUser] = useState(null); // State to hold the error message
+  const { currentUser } = useContext(AppContext);
   const { supabaseClient } = useSessionContext();
   const [formData, setFormData] = useState({
     email: '',
@@ -11,10 +12,6 @@ export default function ProfileInfos({ profile }) {
     username: '',
   });
   const [isEditing, setIsEditing] = useState(false);
-
-  useEffect(() => {
-    setUser(JSON.parse(sessionStorage.getItem('user')));
-  }, []);
 
   useEffect(() => {
     setFormData({
@@ -42,7 +39,6 @@ export default function ProfileInfos({ profile }) {
       .select();
 
     if (data) {
-      console.log(data);
       setIsEditing(!isEditing);
     }
   };
