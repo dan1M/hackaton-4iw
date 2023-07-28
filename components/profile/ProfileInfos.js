@@ -50,7 +50,7 @@ export default function ProfileInfos({ profile }) {
           Infos
         </h1>
         <div>
-          {profile && user && profile.id === user.id && (
+          {profile && currentUser && profile.id === currentUser.id && (
             <div className='flex items-center'>
               <label
                 htmlFor='full_name'
@@ -109,7 +109,7 @@ export default function ProfileInfos({ profile }) {
               required
             />
           </div>
-          {profile && user && profile.id === user.id && (
+          {profile && currentUser && profile.id === currentUser.id && (
             <div className='flex items-center'>
               <label htmlFor='password' className='block text-md font-semibold'>
                 Mot&nbsp;de&nbsp;passe&nbsp;:
@@ -132,7 +132,7 @@ export default function ProfileInfos({ profile }) {
         </div>
       </div>
 
-      {profile && user && profile.id === user.id && (
+      {profile && currentUser && profile.id === currentUser.id && (
         <>
           <div className='flex justify-center '>
             {!isEditing ? (

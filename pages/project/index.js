@@ -3,6 +3,7 @@ import Card from '@/components/Card';
 import { useSessionContext } from '@supabase/auth-helpers-react';
 import { useEffect, useState } from 'react';
 import CustomModal from '@/components/CustomModal';
+import Title from '@/components/Title';
 
 const Projects = () => {
   const { supabaseClient } = useSessionContext();
@@ -69,7 +70,8 @@ const Projects = () => {
   };
 
   return (
-    <main className='p-4'>
+    <main className='p-4 w-4/5'>
+      <Title text='Projets' />
       <Button text='Ajouter un projet' onClick={handleOpenModal} />
 
       <CustomModal
@@ -129,7 +131,7 @@ const Projects = () => {
           </div>
         </div>
       </CustomModal>
-      <div className='flex flex-wrap'>
+      <div className='flex flex-wrap justify-center'>
         {projects?.map((project) => {
           return (
             <Card

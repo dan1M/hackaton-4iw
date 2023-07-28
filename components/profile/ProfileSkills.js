@@ -122,28 +122,31 @@ export default function ProfileSkills({ profile }) {
               >
                 {skill.skill_id.name}
 
-                {user && (user.role === 'rh' || user.role === 'mgr') && (
-                  <>
-                    {skill.status !== 'valid' && (
+                {currentUser &&
+                  (currentUser.role === 'rh' || currentUser.role === 'mgr') && (
+                    <>
+                      {skill.status !== 'valid' && (
+                        <button
+                          className={
+                            'text-sm inline-flex items-center font-bold leading-sm uppercase px-1 ml-2 rounded-full hover:bg-orange-400'
+                          }
+                          onClick={() =>
+                            validateProfileSkill(skill.skill_id.id)
+                          }
+                        >
+                          {'✔'}
+                        </button>
+                      )}
                       <button
                         className={
                           'text-sm inline-flex items-center font-bold leading-sm uppercase px-1 ml-2 rounded-full hover:bg-orange-400'
                         }
-                        onClick={() => validateProfileSkill(skill.skill_id.id)}
+                        onClick={() => deleteProfileSkill(skill.skill_id.id)}
                       >
-                        {'✔'}
+                        {'❌'}
                       </button>
-                    )}
-                    <button
-                      className={
-                        'text-sm inline-flex items-center font-bold leading-sm uppercase px-1 ml-2 rounded-full hover:bg-orange-400'
-                      }
-                      onClick={() => deleteProfileSkill(skill.skill_id.id)}
-                    >
-                      {'❌'}
-                    </button>
-                  </>
-                )}
+                    </>
+                  )}
               </div>
             );
           })}
@@ -168,7 +171,7 @@ export default function ProfileSkills({ profile }) {
               </button>
             </div>
           )}
-          {profile && user && profile.id === user.id && (
+          {profile && currentUser && profile.id === currentUser.id && (
             <button
               className={
                 'text-sm inline-flex items-center font-bold leading-sm uppercase px-3 py-1  m-1.5  bg-white text-gray-700 rounded-full '

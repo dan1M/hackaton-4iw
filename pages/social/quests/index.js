@@ -4,6 +4,7 @@ import { useSessionContext } from '@supabase/auth-helpers-react';
 import { useContext, useEffect, useState } from 'react';
 import CustomModal from '@/components/CustomModal';
 import { AppContext } from '@/pages/_app';
+import Title from '@/components/Title';
 
 const Quests = () => {
   const { currentUser } = useContext(AppContext);
@@ -138,7 +139,8 @@ const Quests = () => {
   };
 
   return (
-    <main className='p-4 w-full'>
+    <main className='p-4 w-4/5'>
+      <Title text='Quêtes' />
       <Button text='Ajouter une quete' onClick={handleOpenModalCustom} />
       <CustomModal
         isOpen={isModalCustomOpen}
@@ -339,7 +341,7 @@ const Quests = () => {
           </div>
         </div>
       </CustomModal>
-      <div className='flex flex-wrap'>
+      <div className='flex flex-wrap justify-center'>
         {quests?.map((quest) => {
           return (
             <Card

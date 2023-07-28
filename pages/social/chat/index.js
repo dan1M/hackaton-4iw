@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useSessionContext } from '@supabase/auth-helpers-react';
 import Message from '../../../components/Message';
 import Button from '@/components/Button';
@@ -7,8 +7,10 @@ import Conversation from '@/components/Conversation';
 import Lottie from 'lottie-react';
 
 import confetti from '../../../public/animations/confetti.json';
+import { AppContext } from '@/pages/_app';
 
 const Chat = () => {
+  const { currentUser } = useContext(AppContext);
   const { supabaseClient } = useSessionContext();
 
   const [message, setMessage] = useState([]);
@@ -24,8 +26,6 @@ const Chat = () => {
   const [conversationId, setConversationId] = useState(null);
 
   const [newConversationuser, setNewConversationUser] = useState();
-
-  const [user, setUser] = useState([]);
 
   const fetchMessages = async (id = 0) => {
     console.log('CONV ID : ', conversationId);
@@ -64,16 +64,15 @@ const Chat = () => {
     const { data, error } = await supabaseClient
       .from('private_conversations')
       .select('*')
-      .or(`profile_id_creator.eq.${user.id},profile_id_receiver.eq.${user.id}`);
+      .or(
+        `profile_id_creator.eq.${currentUser.id},profile_id_receiver.eq.${currentUser.id}`
+      );
 
     console.log(data);
     setConversations(data);
   };
 
   useEffect(() => {
-    const user = JSON.parse(sessionStorage.getItem('user'));
-    setUser(user);
-
     fetchMessages();
 
     fetchUsers();
@@ -101,12 +100,10 @@ const Chat = () => {
   }, []);
 
   useEffect(() => {
-    if (user.id) {
-      console.log('USER : ', user);
-
+    if (currentUser) {
       fetchConversations();
     }
-  }, [user.id]);
+  }, [currentUser]);
 
   useEffect(() => {
     fetchMessages();
@@ -118,7 +115,7 @@ const Chat = () => {
     const { data: profilequests } = await supabaseClient
       .from('profilesquests')
       .select('*')
-      .match({ profile_id: user.id, type: 'talk' });
+      .match({ profile_id: currentUser.id, type: 'talk' });
 
     console.log('PROFILE QUEST : ', profilequests);
     profilequests.map(async (profilequest) => {
@@ -151,16 +148,16 @@ const Chat = () => {
     if (conversationId === null) {
       const { error } = await supabaseClient.from('messages').insert({
         content: message,
-        profile_id: user.id,
-        username: user.username,
-        fullname: user.full_name,
+        profile_id: currentUser.id,
+        username: currentUser.username,
+        fullname: currentUser.full_name,
       });
     } else {
       const { error } = await supabaseClient.from('messages').insert({
         content: message,
-        profile_id: user.id,
-        username: user.username,
-        fullname: user.full_name,
+        profile_id: currentUser.id,
+        username: currentUser.username,
+        fullname: currentUser.full_name,
         conversation_id: conversationId,
       });
     }
@@ -199,7 +196,7 @@ const Chat = () => {
     const { error } = await supabaseClient
       .from('private_conversations')
       .insert({
-        profile_id_creator: user.id,
+        profile_id_creator: currentUser.id,
         profile_id_receiver: newConversationuser,
         name: name,
       });
@@ -248,7 +245,7 @@ const Chat = () => {
   };
 
   return (
-    <div className='container mx-auto p-4 flex'>
+    <div className='mx-auto p-4 flex w-4/5'>
       <CustomModal
         isOpen={isModalOpen}
         onRequestClose={handleCloseModal}

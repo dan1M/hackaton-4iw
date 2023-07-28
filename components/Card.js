@@ -8,6 +8,7 @@ import FormProject from './form-edit/edit-project';
 import FormEvent from './form-edit/edit-event';
 import FormQuest from './form-edit/edit-quest';
 import FormFormation from './form-edit/edit-formation';
+import { useRouter } from 'next/router';
 
 function Card({
   id,
@@ -21,6 +22,7 @@ function Card({
   const [displayModalEdit, setDisplayModalEdit] = useState(false);
   const [showDropdown, setShowDrown] = useState(false);
   const { supabaseClient } = useSessionContext();
+  const router = useRouter();
 
   const customStyles = {
     content: {
@@ -86,92 +88,121 @@ function Card({
     }
   };
 
-  const handleShowDropdown = () => {
+  const handleShowDropdown = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
     setShowDrown(!showDropdown);
   };
 
   return (
     <>
-      <div className='flex flex-col w-full max-w-xs m-2 bg-white border border-gray-200 rounded-lg shadow dark:bg-carbon-blue dark:border-gray-700'>
-        <div className='flex justify-end px-4 pt-4 relative '>
-          <button
-            onClick={handleShowDropdown}
-            id='dropdownButton'
-            data-dropdown-toggle='dropdown'
-            className='inline-block text-gray-500 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-1.5'
-            type='button'
-          >
-            <span className='sr-only'>Open dropdown</span>
-            <svg
-              className='w-5 h-5'
-              aria-hidden='true'
-              xmlns='http://www.w3.org/2000/svg'
-              fill='currentColor'
-              viewBox='0 0 16 3'
+      <div
+        className='inline-flex p-1 cursor-pointer flex-col w-full max-w-xs mb-2 mr-2 rounded-lg group bg-gradient-to-br from-secondary to-carbon-blue shadow'
+        onClick={() => {
+          switch (type) {
+            case 'client':
+              router.push(`/clients/${id}`);
+              break;
+            case 'user':
+              router.push(`/users/${id}`);
+              break;
+            case 'project':
+              router.push(`/projects/${id}`);
+              break;
+            case 'event':
+              router.push(`/social/events/${id}`);
+              break;
+            case 'quests':
+              router.push(`/social/quests/${id}`);
+              break;
+            default:
+          }
+        }}
+      >
+        <div className='p-4 bg-white rounded-md'>
+          <div className='flex justify-end  relative '>
+            <button
+              onClick={handleShowDropdown}
+              id='dropdownButton'
+              data-dropdown-toggle='dropdown'
+              className='inline-block text-primary hover:bg-gray-100 rounded-lg text-sm p-1.5'
+              type='button'
             >
-              <path d='M2 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm6.041 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM14 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Z' />
-            </svg>
-          </button>
-          {showDropdown && (
-            <div
-              id='dropdown'
-              className=' absolute right-12 z-10 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-primary'
-            >
-              <ul className='py-2' aria-labelledby='dropdownButton'>
-                {type !== 'user' &&
-                  title !== 'Parler' &&
-                  title !== 'Visiter Profil' && (
-                    <>
-                      <li>
-                        <a
-                          onClick={() => {
-                            setDisplayModalEdit(true);
-                            setShowDrown(false);
-                          }}
-                          href='#'
-                          className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white'
-                        >
-                          Modifier
-                        </a>
-                      </li>
-                    </>
-                  )}
-                <li>
-                  <a
-                    onClick={() => {
-                      setShowDrown(false);
-                      setDisplayModalDelete(true);
-                    }}
-                    href='#'
-                    className='block px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600  dark:hover:text-white'
-                  >
-                    Supprimer
-                  </a>
-                </li>
-              </ul>
-            </div>
-          )}
-        </div>
-        <div className='flex flex-col items-center pb-4 '>
-          {imageUrl && (
-            <Image
-              className='w-24 h-24 mb-3 rounded-full shadow-lg'
-              src={imageUrl}
-              alt='Image'
-              width={50}
-              height={50}
-            />
-          )}
+              <span className='sr-only'>Open dropdown</span>
+              <svg
+                className='w-5 h-5'
+                aria-hidden='true'
+                xmlns='http://www.w3.org/2000/svg'
+                fill='currentColor'
+                viewBox='0 0 16 3'
+              >
+                <path d='M2 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm6.041 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM14 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Z' />
+              </svg>
+            </button>
+            {showDropdown && (
+              <div
+                id='dropdown'
+                className=' absolute right-12 z-10 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-primary'
+              >
+                <ul className='py-2' aria-labelledby='dropdownButton'>
+                  {type !== 'user' &&
+                    title !== 'Parler' &&
+                    title !== 'Visiter Profil' && (
+                      <>
+                        <li>
+                          <a
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              setDisplayModalEdit(true);
+                              setShowDrown(false);
+                            }}
+                            href='#'
+                            className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white'
+                          >
+                            Modifier
+                          </a>
+                        </li>
+                      </>
+                    )}
+                  <li>
+                    <a
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setShowDrown(false);
+                        setDisplayModalDelete(true);
+                      }}
+                      href='#'
+                      className='block px-4 py-2 text-sm text-secondary hover:bg-gray-100 dark:hover:bg-gray-600'
+                    >
+                      Supprimer
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            )}
+          </div>
+          <div className='flex flex-col items-center '>
+            {imageUrl && (
+              <Image
+                className='w-24 h-24 mb-3 rounded-full shadow-lg'
+                src={imageUrl}
+                alt='Image'
+                width={50}
+                height={50}
+              />
+            )}
 
-          <h5 className='mb-1 text-xl font-medium text-gray-900 dark:text-white'>
-            {title}
-          </h5>
-          <span className='text-sm text-gray-500 dark:text-gray-400'>
-            {subtitle}
-          </span>
-          <div className='flex mt-4 space-x-3 md:mt-6'></div>
+            <h5 className='mb-1 text-xl font-semibold text-primary'>{title}</h5>
+            <span className='text-sm text-gray-500 dark:text-gray-400'>
+              {subtitle}
+            </span>
+            <div className='flex mt-4 space-x-3 md:mt-6'></div>
+          </div>
         </div>
       </div>
+
       <CustomModal
         isOpen={displayModalDelete}
         onRequestClose={() => setDisplayModalDelete(false)}

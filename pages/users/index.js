@@ -3,6 +3,7 @@ import Card from '@/components/Card';
 import { useSessionContext } from '@supabase/auth-helpers-react';
 import { useEffect, useState } from 'react';
 import CustomModal from '@/components/CustomModal';
+import Title from '@/components/Title';
 
 const Users = () => {
   const { supabaseClient } = useSessionContext();
@@ -72,7 +73,8 @@ const Users = () => {
   };
 
   return (
-    <main className='p-4'>
+    <main className='p-4 w-4/5'>
+      <Title text='Collaborateurs' />
       <Button
         text='Ajouter un utilisateur'
         onClick={() => {
@@ -209,7 +211,7 @@ const Users = () => {
         </div>
       </CustomModal>
 
-      <div className='flex flex-wrap'>
+      <div className='flex flex-wrap justify-center'>
         {users?.map((user) => {
           return (
             <Card

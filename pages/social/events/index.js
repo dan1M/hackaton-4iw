@@ -3,6 +3,7 @@ import Card from '@/components/Card';
 import { useSessionContext } from '@supabase/auth-helpers-react';
 import { useEffect, useState } from 'react';
 import CustomModal from '@/components/CustomModal';
+import Title from '@/components/Title';
 
 const Event = () => {
   const { supabaseClient } = useSessionContext();
@@ -69,7 +70,8 @@ const Event = () => {
   };
 
   return (
-    <main className='p-4'>
+    <main className='p-4 w-4/5'>
+      <Title text='Evènements' />
       <Button text='Ajouter un évènement' onClick={handleOpenModal} />
 
       <CustomModal
@@ -129,7 +131,7 @@ const Event = () => {
           </div>
         </div>
       </CustomModal>
-      <div className='flex flex-wrap'>
+      <div className='flex flex-wrap justify-center'>
         {evenements?.map((evenement) => {
           return (
             <Card

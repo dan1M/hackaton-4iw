@@ -4,6 +4,7 @@ import { useSessionContext } from '@supabase/auth-helpers-react';
 import { useEffect, useState } from 'react';
 import CustomModal from '@/components/CustomModal';
 import Sidebar from '@/components/Sidebar';
+import Title from '@/components/Title';
 
 const Formations = () => {
   const { supabaseClient } = useSessionContext();
@@ -74,7 +75,8 @@ const Formations = () => {
   };
 
   return (
-    <main className='p-4'>
+    <main className='p-4 w-4/5'>
+      <Title text='Formations' />
       <Button text='Ajouter une formation' onClick={handleOpenModal} />
 
       <CustomModal
