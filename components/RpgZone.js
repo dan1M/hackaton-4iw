@@ -1,3 +1,4 @@
+import { ProgressBar } from './ProgressBar';
 import Image from 'next/image';
 import { useContext, useEffect, useState } from 'react';
 import Button from './Button';
@@ -52,27 +53,7 @@ export default function RpgZone() {
         <p className='text-sm mr-2'>
           Nv.&nbsp;{currentUser && currentUser.lvl_global}
         </p>
-        <div className='w-full'>
-          <div className='w-full bg-gray-200 rounded-full h-3 dark:bg-gray-700 relative'>
-            <div
-              className='bg-green-600 h-3 rounded-full dark:bg-green-500 relative transition-all duration-300'
-              style={{
-                width: `${(actualXp / XP_PER_LVL) * 100}%`,
-                maxWidth: '100%',
-              }}
-            >
-              {(actualXp / XP_PER_LVL) * 100 > 0 &&
-                (actualXp / XP_PER_LVL) * 100 < 100 && (
-                  <p className='text-xs mr-2 absolute right-0 top-0 leading-none text-white'>
-                    {actualXp}
-                  </p>
-                )}
-            </div>
-            <p className='text-xs mr-2 absolute right-0 top-0 leading-none text-white'>
-              {XP_PER_LVL}
-            </p>
-          </div>
-        </div>
+        <ProgressBar value={actualXp} maxValue={XP_PER_LVL} />
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import CustomModal from '@/components/CustomModal';
 import Button from './Button';
 import { useSessionContext } from '@supabase/auth-helpers-react';
@@ -9,6 +9,7 @@ import FormEvent from './form-edit/edit-event';
 import FormQuest from './form-edit/edit-quest';
 import FormFormation from './form-edit/edit-formation';
 import { useRouter } from 'next/router';
+import { ProgressBar } from './ProgressBar';
 
 function Card({
   id,
@@ -16,13 +17,19 @@ function Card({
   subtitle,
   imageUrl,
   triggerFetch,
+  quest,
   type = 'default',
 }) {
   const [displayModalDelete, setDisplayModalDelete] = useState(false);
   const [displayModalEdit, setDisplayModalEdit] = useState(false);
   const [showDropdown, setShowDrown] = useState(false);
   const { supabaseClient } = useSessionContext();
+  const [questData, setQuestData] = useState(null);
   const router = useRouter();
+
+  useEffect(() => {
+    if (quest) setQuestData(quest);
+  }, [quest]);
 
   const customStyles = {
     content: {
@@ -97,7 +104,18 @@ function Card({
   return (
     <>
       <div
-        className='inline-flex p-1 cursor-pointer flex-col w-full max-w-xs mb-2 mr-2 rounded-lg group bg-gradient-to-br from-secondary to-carbon-blue shadow'
+        className={
+          'inline-flex p-1 cursor-pointer flex-col w-full max-w-xs mb-2 mr-2 rounded-lg group bg-gradient-to-br from-secondary to-carbon-blue shadow' +
+          (quest && quest.quests.difficulty === 'easy'
+            ? ' from-carbon-green to-carbon-blue'
+            : quest && quest.quests.difficulty === 'medium'
+            ? ' from-yellow-500 to-orange-500'
+            : quest && quest.quests.difficulty === 'hard'
+            ? ' from-orange-500 to-red-500'
+            : quest && quest.quests.difficulty === 'custom'
+            ? ' from-black to-red-500'
+            : '')
+        }
         onClick={() => {
           switch (type) {
             case 'client':
@@ -112,34 +130,34 @@ function Card({
             case 'event':
               router.push(`/social/events/${id}`);
               break;
-            case 'quests':
-              router.push(`/social/quests/${id}`);
-              break;
             default:
           }
         }}
       >
         <div className='p-4 bg-white rounded-md'>
           <div className='flex justify-end  relative '>
-            <button
-              onClick={handleShowDropdown}
-              id='dropdownButton'
-              data-dropdown-toggle='dropdown'
-              className='inline-block text-primary hover:bg-gray-100 rounded-lg text-sm p-1.5'
-              type='button'
-            >
-              <span className='sr-only'>Open dropdown</span>
-              <svg
-                className='w-5 h-5'
-                aria-hidden='true'
-                xmlns='http://www.w3.org/2000/svg'
-                fill='currentColor'
-                viewBox='0 0 16 3'
+            {!quest && (
+              <button
+                onClick={handleShowDropdown}
+                id='dropdownButton'
+                data-dropdown-toggle='dropdown'
+                className='inline-block text-primary hover:bg-gray-100 rounded-lg text-sm p-1.5'
+                type='button'
               >
-                <path d='M2 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm6.041 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM14 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Z' />
-              </svg>
-            </button>
-            {showDropdown && (
+                <span className='sr-only'>Open dropdown</span>
+                <svg
+                  className='w-5 h-5'
+                  aria-hidden='true'
+                  xmlns='http://www.w3.org/2000/svg'
+                  fill='currentColor'
+                  viewBox='0 0 16 3'
+                >
+                  <path d='M2 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm6.041 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM14 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Z' />
+                </svg>
+              </button>
+            )}
+
+            {showDropdown && !quest && (
               <div
                 id='dropdown'
                 className=' absolute right-12 z-10 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-primary'
@@ -194,11 +212,37 @@ function Card({
               />
             )}
 
-            <h5 className='mb-1 text-xl font-semibold text-primary'>{title}</h5>
+            <h5 className='mb-1 text-xl font-semibold text-primary'>
+              {quest ? quest.quests.description : title}
+            </h5>
             <span className='text-sm text-gray-500 dark:text-gray-400'>
               {subtitle}
             </span>
-            <div className='flex mt-4 space-x-3 md:mt-6'></div>
+            {quest && (
+              <ProgressBar
+                value={quest.values === null ? 0 : quest.values.length}
+                maxValue={quest.quests.number_to_do}
+              />
+            )}
+            {quest &&
+              quest.quests.quest_type === 'custom' &&
+              quest.quests.type === 'irl' && (
+                <div className='mt-3'>
+                  <input
+                    type='file'
+                    name='fileProof'
+                    id='fileProof'
+                    accept='.jpg, .jpeg, .png, .pdf'
+                    className='opacity-0 absolute z-0 w-0 h-0'
+                  />
+                  <label
+                    htmlFor='fileProof'
+                    className='bg-red-500 rounded-full px-2 py-1'
+                  >
+                    Preuve requise 📤
+                  </label>
+                </div>
+              )}
           </div>
         </div>
       </div>
