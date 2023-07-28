@@ -17,6 +17,7 @@ const Formations = () => {
   const [formData, setFormData] = useState({
     name: "",
     place: "",
+    status: "",
     duration: 0,
   });
 
@@ -49,6 +50,7 @@ const Formations = () => {
 
   useEffect(() => {
     fetchFormations();
+    fetchprofilesformations;
   }, []);
 
   const fetchFormations = async () => {
@@ -61,6 +63,29 @@ const Formations = () => {
       setFormations(data);
     }
   };
+  const fetchprofilesformations = async () => {
+    const { data, error } = await supabaseClient
+      .from("profilesformations")
+      .select("*");
+    if (error) {
+      console.error("Error fetching profilesformations:", error);
+      return;
+    }
+    const formationsWithStatus = formations.map(formation => {
+      const matchingProfileFormation = data.find(
+        profileFormation => profileFormation.formation_id === formation.id
+      );
+      return {
+        ...formation,
+        status: matchingProfileFormation
+          ? matchingProfileFormation.status
+          : "unknown",
+      };
+    });
+
+    setFormations(formationsWithStatus);
+  };
+
   const handleOpenModal = () => {
     setIsModalOpen(true);
   };
@@ -86,6 +111,7 @@ const Formations = () => {
     });
     handleCloseModal();
     fetchFormations();
+    fetchprofilesformations();
   };
 
   const user =
