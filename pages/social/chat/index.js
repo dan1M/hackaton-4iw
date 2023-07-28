@@ -493,11 +493,7 @@ const Chat = () => {
               value={message}
               onChange={handleChange}
             />
-            <Button
-              type="submit"
-              text="Envoyer"
-              className="bg-carbon-blue hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            />
+            <Button type="submit" text="Envoyer" />
           </form>
         </div>
       </div>
