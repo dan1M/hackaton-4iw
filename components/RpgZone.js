@@ -43,7 +43,7 @@ export default function RpgZone() {
       <div className='flex items-center h-full max-w-5xl mx-auto'>
         <Image
           className='w-16 h-16 rounded-full mr-8 shadow-lg'
-          src={'/next.svg'}
+          src={currentUser?.avatar_url ?? '/next.svg'}
           alt=''
           width={16}
           height={16}
@@ -73,7 +73,6 @@ export default function RpgZone() {
             </p>
           </div>
         </div>
-        <Button text='Ajout XP' type='active' onClick={addXpToUser} />
       </div>
     </div>
   );
