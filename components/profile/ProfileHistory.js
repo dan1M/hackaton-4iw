@@ -1,9 +1,7 @@
-import { AppContext } from '@/pages/_app';
 import { useSessionContext } from '@supabase/auth-helpers-react';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function ProfileHistory({ profile }) {
-  const { currentUser } = useContext(AppContext);
   const { supabaseClient } = useSessionContext();
   const [profileQuests, setProfileQuests] = useState([]);
 

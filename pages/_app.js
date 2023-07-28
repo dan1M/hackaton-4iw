@@ -1,3 +1,4 @@
+import QuestLog from '@/components/QuestLog';
 import RpgZone from '@/components/RpgZone';
 import Sidebar from '@/components/Sidebar';
 import '@/styles/globals.css';
@@ -18,7 +19,7 @@ export default function App({ Component, pageProps }) {
     const user = sessionStorage.getItem('user');
 
     supabaseClient
-      .channel('messages')
+      .channel('profiles')
       .on(
         'postgres_changes',
         {
@@ -50,10 +51,15 @@ export default function App({ Component, pageProps }) {
     >
       <AppContext.Provider value={{ currentUser, updateCurrentUser }}>
         {router.pathname !== '/login' ? (
-          <div className='flex'>
+          <div className='flex relative'>
             <Sidebar />
             <Component {...pageProps} />
-            {router.pathname.startsWith('/social') && <RpgZone />}
+            {router.pathname.startsWith('/social') && (
+              <>
+                <QuestLog />
+                <RpgZone />
+              </>
+            )}
           </div>
         ) : (
           <Component {...pageProps} />
