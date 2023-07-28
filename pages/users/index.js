@@ -3,7 +3,7 @@ import Card from '@/components/Card';
 import { useSessionContext } from '@supabase/auth-helpers-react';
 import { useEffect, useState } from 'react';
 import CustomModal from '@/components/CustomModal';
-import { supabase } from '@supabase/auth-ui-shared';
+import Title from '@/components/Title';
 
 const Users = () => {
   const { supabaseClient } = useSessionContext();
@@ -13,7 +13,7 @@ const Users = () => {
     email: '',
     password: '',
     full_name: '',
-    role: '',
+    role: 'dev',
     job_title: '',
   });
   useEffect(() => {
@@ -32,9 +32,10 @@ const Users = () => {
       [name]: value,
     }));
   };
+
   const handleCreateUser = async (e) => {
     e.preventDefault();
-    const { data, error } = await supabaseClient 
+    const { data, error } = await supabaseClient
       .from('profiles')
       .insert({
         email: formData.email,
@@ -43,13 +44,13 @@ const Users = () => {
         role: formData.role,
         job_title: formData.job_title,
       })
-      .select('*');
+      .select();
+
     if (data) {
       setDisplayNewUser(false);
       fetchUsers();
     }
   };
-  
 
   const customStyles = {
     content: {
@@ -72,14 +73,15 @@ const Users = () => {
   };
 
   return (
-    <main className='p-4'>
+    <main className='p-4 w-4/5'>
+      <Title text='Collaborateurs' />
+      <Button
+        text='Ajouter un utilisateur'
+        onClick={() => {
+          setDisplayNewUser(!displayNewUser);
+        }}
+      />
 
-        <Button
-          text='Ajouter un utilisateur'
-          onClick={() => setDisplayNewUser(true)}
-        />
-  
-      
       <CustomModal
         isOpen={displayNewUser}
         onRequestClose={() => setDisplayNewUser(false)}
@@ -209,7 +211,7 @@ const Users = () => {
         </div>
       </CustomModal>
 
-      <div className='flex flex-wrap'>
+      <div className='flex flex-wrap justify-center'>
         {users?.map((user) => {
           return (
             <Card
@@ -217,7 +219,7 @@ const Users = () => {
               id={user.id}
               title={user.full_name}
               subtitle={user.job_title}
-              imageUrl={'next.svg'}
+              imageUrl={'/next.svg'}
               triggerFetch={(id) => {
                 if (id) {
                   setUsers(users.filter((user) => user.id !== id));
