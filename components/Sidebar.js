@@ -19,9 +19,11 @@ const Sidebar = () => {
     logo: {
      textAllign: 'center',
      border:' 1px solid #8d8a8a',
-     width: '90%',
+     width: '100%',
      marginLeft: 'auto',
      marginRight: 'auto',
+     boxShadow: 'black 0px 0px 40px 0px',
+     borderRadius: '1px',
     }
   }
   return (
