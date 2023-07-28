@@ -224,6 +224,25 @@ function Card({
                 maxValue={quest.quests.number_to_do}
               />
             )}
+            {quest &&
+              quest.quests.quest_type === 'custom' &&
+              quest.quests.type === 'irl' && (
+                <div className='mt-3'>
+                  <input
+                    type='file'
+                    name='fileProof'
+                    id='fileProof'
+                    accept='.jpg, .jpeg, .png, .pdf'
+                    className='opacity-0 absolute z-0 w-0 h-0'
+                  />
+                  <label
+                    htmlFor='fileProof'
+                    className='bg-red-500 rounded-full px-2 py-1'
+                  >
+                    Preuve requise 📤
+                  </label>
+                </div>
+              )}
           </div>
         </div>
       </div>
