@@ -56,7 +56,7 @@ const List = () => {
   const handleAcceptFormation = async (formationId) => {
     const { error } = await supabaseClient
       .from("profilesformations")
-      .update({ status: "accepted" })
+      .update({ status: "votre demande est accepter 😁 🤟🔥" })
       .eq("id", formationId);
 
     if (error) {
@@ -111,7 +111,7 @@ const List = () => {
                   Accepter
                 </button>
                 <button onClick={() => handleCancelFormation(formation.id)}>
-                  Annuler
+                  Réfuser
                 </button>
               </td>
             </tr>

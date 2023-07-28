@@ -15,7 +15,7 @@ function Card({
   id,
   title,
   subtitle,
-  duration,
+  status,
   imageUrl,
   triggerFetch,
   quest,
@@ -76,7 +76,6 @@ function Card({
         return false;
       }
     } catch (error) {
-      console.error("Error checking event registration:", error.message);
       return false;
     }
   };
@@ -208,6 +207,7 @@ function Card({
         } else {
           console.error("Error unregistering user from the formation", error);
         }
+        window.location.reload();
       } else {
         const { data, error } = await supabaseClient
           .from("profilesformations")
@@ -218,6 +218,7 @@ function Card({
         } else {
           console.error("Error registering user for the formation:", error);
         }
+        window.location.reload();
       }
     } catch (error) {
       console.error(

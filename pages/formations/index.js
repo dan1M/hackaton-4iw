@@ -42,48 +42,47 @@ const Formations = () => {
   };
 
   useEffect(() => {
-    const user = JSON.parse(sessionStorage.getItem("user"));
-    if (!user) {
-      router.push("/login");
-    }
-  }, []);
-
-  useEffect(() => {
     fetchFormations();
-    fetchprofilesformations;
   }, []);
 
   const fetchFormations = async () => {
-    const { data, error } = await supabaseClient.from("formations").select(`
-        *,
-        profilesformations:profilesformations(*)
-      `);
+    try {
+      const { data: formationsData, error: formationsError } =
+        await supabaseClient.from("formations").select("*");
+      if (formationsError) {
+        return;
+      }
+      const statusAttente = "En attente d'acceptation";
+      const { data: profilesFormationsData, error: profilesFormationsError } =
+        await supabaseClient.from("profilesformations").select("*");
+      if (profilesFormationsError) {
+        return;
+      }
+      const formationsWithStatus = formationsData.map(formation => {
+        const matchingProfileFormation = profilesFormationsData.find(
+          profileFormation => profileFormation.formation_id === formation.id
+        );
+        return {
+          ...formation,
+          status: matchingProfileFormation
+            ? matchingProfileFormation.status
+            : statusAttente,
+        };
+      });
 
-    if (data) {
-      setFormations(data);
-    }
+      setFormations(formationsWithStatus);
+    } catch (error) {}
   };
-  const fetchprofilesformations = async () => {
-    const { data, error } = await supabaseClient
-      .from("profilesformations")
-      .select("*");
-    if (error) {
-      console.error("Error fetching profilesformations:", error);
-      return;
-    }
-    const formationsWithStatus = formations.map(formation => {
-      const matchingProfileFormation = data.find(
-        profileFormation => profileFormation.formation_id === formation.id
-      );
-      return {
-        ...formation,
-        status: matchingProfileFormation
-          ? matchingProfileFormation.status
-          : "unknown",
-      };
-    });
 
-    setFormations(formationsWithStatus);
+  const handleCreateFormation = async e => {
+    e.preventDefault();
+    const { error } = await supabaseClient.from("formations").insert({
+      name: formData.name,
+      place: formData.place,
+      duration: formData.duration,
+    });
+    handleCloseModal();
+    fetchFormations();
   };
 
   const handleOpenModal = () => {
@@ -102,33 +101,13 @@ const Formations = () => {
     }));
   };
 
-  const handleCreateFormation = async e => {
-    e.preventDefault();
-    const { error } = await supabaseClient.from("formations").insert({
-      name: formData.name,
-      place: formData.place,
-      duration: formData.duration,
-    });
-    handleCloseModal();
-    fetchFormations();
-    fetchprofilesformations();
-  };
-
   const user =
     typeof window !== "undefined"
       ? JSON.parse(sessionStorage.getItem("user"))
       : null;
   const role = user?.role;
 
-  const formationStatus =
-    typeof window != "undefined"
-      ? JSON.parse(sessionStorage.getItem("profilesformations"))
-      : null;
-  const status = formationStatus?.status;
-
-  console.log(status);
-
-  const isRole = role === "rh";
+  const isRole = role === "mgr" || role === "rh";
 
   return (
     <main className="p-4 w-full">
