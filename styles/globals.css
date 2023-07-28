@@ -48,10 +48,6 @@
   transform: translateX(0);
 }
 
-.sidebar {
-  background-color: rgb(43, 44, 44);
-}
-
 a {
   cursor: pointer;
 }
