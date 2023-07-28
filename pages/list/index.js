@@ -1,6 +1,7 @@
-
 import React, { useState, useEffect } from "react";
 import { useSessionContext } from "@supabase/auth-helpers-react";
+import Button from "@/components/Button";
+import Title from '@/components/Title';
 
 const List = () => {
   const { supabaseClient } = useSessionContext();
@@ -36,7 +37,10 @@ const List = () => {
       return {};
     }
 
-    setFormationData(data[0]);
+    setFormationData((prevFormationData) => ({
+      ...prevFormationData,
+      [formationId]: data[0],
+    }));
   };
 
   const fetchUserData = async (userId) => {
@@ -50,7 +54,10 @@ const List = () => {
       return {};
     }
 
-    setUserData(data[0]);
+    setUserData((prevUserData) => ({
+      ...prevUserData,
+      [userId]: data[0],
+    }));
   };
 
   const handleAcceptFormation = async (formationId) => {
@@ -85,32 +92,48 @@ const List = () => {
       fetchUserData(formation.profile_id);
     });
   }, [formations]);
-
-  
+  const styles = {
+    container: "p-4 ",
+    title: "text-2xl font-bold mb-4 text-center text-white",
+    table: "w-full border-collapse border border-gray-200 mt-12",
+    th: "border border-gray-200 px-4 py-2 bg-gray-100",
+    td: "border border-gray-200 px-4 py-2 text-white",
+    acceptBtn: "bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded mr-2",
+    cancelBtn:
+      "bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-xl ml-2",
+  };
 
   return (
-    <div>
-      <h1>Request List</h1>
-      <table>
+    <main style={{justifyContent:"center",justifyItems:"center",marginLeft:"auto", marginRight:"auto"}}>
+    <div className={styles.container}>
+    <Title text='Liste des commandes' />
+
+      <table className={styles.table}>
         <thead>
           <tr>
-            <th>Formation</th>
-            <th>Lieu</th>
-            <th>Profil</th>
-            <th>Action</th>
+            <th className={styles.th}>Formation</th>
+            <th className={styles.th}>Lieu</th>
+            <th className={styles.th}>Profil</th>
+            <th className={styles.th}>Action</th>
           </tr>
         </thead>
         <tbody>
           {formations.map((formation) => (
             <tr key={formation.id}>
-              <td>{formationData.name}</td>
-              <td>{formationData.place}</td>
-              <td>{userData.username}</td>
-              <td>
-                <button onClick={() => handleAcceptFormation(formation.id)}>
+              <td className={styles.td}>{formationData[formation.formation_id]?.name}</td>
+              <td className={styles.td}>{formationData[formation.formation_id]?.place}</td>
+              <td className={styles.td}>{userData[formation.profile_id]?.username}</td>
+              <td className={styles.td}>
+                <Button
+                  onClick={() => handleAcceptFormation(formation.id)}
+                  text="Accepter"
+                >
                   Accepter
-                </button>
-                <button onClick={() => handleCancelFormation(formation.id)}>
+                </Button>
+                <button
+                  className={styles.cancelBtn}
+                  onClick={() => handleCancelFormation(formation.id)}
+                >
                   Réfuser
                 </button>
               </td>
@@ -119,6 +142,7 @@ const List = () => {
         </tbody>
       </table>
     </div>
+    </main>
   );
 };
 
