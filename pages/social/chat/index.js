@@ -173,7 +173,6 @@ const Chat = () => {
             values: [...profilequest.values, message],
           })
           .eq("id", profilequest.id);
-        console.log("NOT FINISHED");
       }
     });
     if (conversationId === null) {
