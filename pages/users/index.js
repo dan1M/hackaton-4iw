@@ -13,7 +13,7 @@ const Users = () => {
     email: '',
     password: '',
     full_name: '',
-    role: 'dev',
+    role: '',
     job_title: '',
   });
   useEffect(() => {
@@ -32,10 +32,9 @@ const Users = () => {
       [name]: value,
     }));
   };
-
   const handleCreateUser = async (e) => {
     e.preventDefault();
-    const { data, error } = await supabaseClient
+    const { data, error } = await supabaseClient 
       .from('profiles')
       .insert({
         email: formData.email,
@@ -44,13 +43,13 @@ const Users = () => {
         role: formData.role,
         job_title: formData.job_title,
       })
-      .select();
-
+      .select('*');
     if (data) {
       setDisplayNewUser(false);
       fetchUsers();
     }
   };
+  
 
   const customStyles = {
     content: {
