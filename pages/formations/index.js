@@ -4,7 +4,6 @@ import { useSessionContext } from "@supabase/auth-helpers-react";
 import { useEffect, useState } from "react";
 import CustomModal from "@/components/CustomModal";
 
-
 const Formations = () => {
   const { supabaseClient } = useSessionContext();
 
@@ -40,12 +39,19 @@ const Formations = () => {
   useEffect(() => {
     fetchFormations();
   }, []);
-
+  
   const fetchFormations = async () => {
-    const { data } = await supabaseClient.from("formations").select("*");
-    setFormations(data);
-  };
+    const { data, error } = await supabaseClient
+      .from("formations")
+      .select(`
+        *,
+        profilesformations:profilesformations(*)
+      `);
 
+    if (data) {
+      setFormations(data);
+    }
+  };
   const handleOpenModal = () => {
     setIsModalOpen(true);
   };
@@ -67,15 +73,19 @@ const Formations = () => {
     const { error } = await supabaseClient.from("formations").insert({
       name: formData.name,
       place: formData.place,
-      status: formData.status,
       duration: formData.duration,
     });
     handleCloseModal();
     fetchFormations();
   };
+
   const user = typeof window !== 'undefined' ? JSON.parse(sessionStorage.getItem('user')) : null;
   const role = user?.role;
-  console.log(role);
+
+  const formationStatus = typeof window != "undefined" ? JSON.parse(sessionStorage.getItem("profilesformations")) : null;
+  const status = formationStatus?.status;
+
+  console.log(status);
 
   const isRole = role === 'mgr' || role === 'rh';
   
@@ -175,20 +185,19 @@ const Formations = () => {
         </div>
       </CustomModal>
       <div className="flex flex-wrap">
-        {formations?.map(formation => {
+      {formations?.map((formation) => {
+          const formationStatus = formation.profilesformations?.[0]?.status;
           return (
             <Card
               key={formation.id}
               id={formation.id}
               title={formation.name}
-              status={formation.status}
               duration={formation.duration}
+              formationStatus={formationStatus}
               imageUrl={"next.svg"}
-              triggerFetch={id => {
+              triggerFetch={(id) => {
                 if (id) {
-                  setFormations(
-                    formations.filter(formation => formation.id !== id)
-                  );
+                  setFormations(formations.filter((formation) => formation.id !== id));
                 } else {
                   fetchFormations();
                 }

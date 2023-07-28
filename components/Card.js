@@ -13,8 +13,8 @@ function Card({
   id,
   title,
   subtitle,
-  status,
   duration,
+  status,
   imageUrl,
   triggerFetch,
   type = "default",
@@ -31,6 +31,8 @@ function Card({
 
   const isRole = role === "mgr" || role === "rh";
 
+  
+ 
   useEffect(() => {
     const fetchInscriptionStatus = async () => {
       if (type === "event" && user) {
@@ -43,7 +45,8 @@ function Card({
     };
     fetchInscriptionStatus();
   }, [type, id, user, supabaseClient]);
-  
+
+
 
   const isUserRegisteredForEvent = async (eventId, profileId, supabaseClient) => {
     try {
@@ -66,6 +69,8 @@ function Card({
       return false;
     }
   };
+
+
  
   const handleRegisterEvent = async (eventId) => {
     try {
@@ -195,7 +200,7 @@ function Card({
     }
   };
   
-  
+
   const customStyles = {
     content: {
       top: "50%",
@@ -347,13 +352,23 @@ function Card({
           {type === "formation" && (
             <div>
               <h5 className="mb-1 text-xl font-medium text-gray-900 dark:text-white">
-              {status}
+
+              {type === "formation" && inscription && (
+             <div>
+          </div>
+          )}
             </h5>
             <span className="text-sm text-black  text-black text-center">
              Durée:  {duration} Heures
             </span>
+            <span className="text-sm text-black  text-black text-center">
+            {status} 
+            </span>
             </div>
           )}
+          <div>
+            
+          </div>
          
         </div>
         <div style={{ textAlign: "center", cursor: "pointer" }}>
@@ -363,9 +378,7 @@ function Card({
             onClick={() => handleRegisterEvent(id)}
           />
         )}
-        {type === "event" && !user && ( 
-          <p>Please log in to register for this event.</p>
-        )}
+      
       </div>
         <div style={{ textAlign: "center", cursor: "pointer" }}>
         {type === "formation" && user && (
@@ -377,9 +390,7 @@ function Card({
         {type === "formation" && !user && ( 
           <p>Please log in to register for this event.</p>
         )}
-      </div>
-      {/* for formation */}
-       
+      </div>       
       </div>
       <CustomModal
         isOpen={displayModalDelete}
