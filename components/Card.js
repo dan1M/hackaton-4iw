@@ -220,7 +220,7 @@ function Card({
             </span>
             {quest && (
               <ProgressBar
-                value={quest.values ?? 0}
+                value={quest.values === null ? 0 : quest.values.length}
                 maxValue={quest.quests.number_to_do}
               />
             )}

@@ -14,10 +14,12 @@ export default function App({ Component, pageProps }) {
   const [supabaseClient] = useState(() => createPagesBrowserClient());
   const router = useRouter();
   const [currentUser, setCurrentUser] = useState(null);
+  const [userQuests, setUserQuests] = useState([]);
 
   useEffect(() => {
     const user = sessionStorage.getItem('user');
 
+    // listener for user update
     supabaseClient
       .channel('profiles')
       .on(
@@ -40,8 +42,39 @@ export default function App({ Component, pageProps }) {
     }
   }, []);
 
+  useEffect(() => {
+    if (currentUser) {
+      // listener for userQuests update
+      supabaseClient
+        .channel('profilesquests')
+        .on(
+          'postgres_changes',
+          {
+            event: 'UPDATE',
+            schema: 'public',
+            table: 'profilesquests',
+          },
+          (payload) => {
+            // update a quest of currentUser from userQuests
+            const updatedUserQuests = userQuests.map((quest) => {
+              if (quest.id === payload.new.id) {
+                return { ...quest, ...payload.new };
+              }
+              return quest;
+            });
+            setUserQuests(updatedUserQuests);
+          }
+        )
+        .subscribe();
+    }
+  }, [currentUser, userQuests]);
+
   const updateCurrentUser = (user) => {
     setCurrentUser(user);
+  };
+
+  const updateUserQuests = (quests) => {
+    setUserQuests(quests);
   };
 
   return (
@@ -49,7 +82,9 @@ export default function App({ Component, pageProps }) {
       supabaseClient={supabaseClient}
       initialSession={pageProps.initialSession}
     >
-      <AppContext.Provider value={{ currentUser, updateCurrentUser }}>
+      <AppContext.Provider
+        value={{ currentUser, updateCurrentUser, userQuests, updateUserQuests }}
+      >
         {router.pathname !== '/login' ? (
           <div className='flex relative'>
             <Sidebar />

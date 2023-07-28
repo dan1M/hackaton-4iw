@@ -14,7 +14,7 @@ export function ProgressBar({ value, maxValue }) {
             <p
               className={
                 'text-xs mr-2 absolute right-0 top-0 leading-none text-white' +
-                (value === 0 && ' -mr-3')
+                (value === 0 && ' -mr-3.5')
               }
             >
               {value}

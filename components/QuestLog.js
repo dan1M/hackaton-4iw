@@ -4,31 +4,8 @@ import { useContext, useEffect, useState } from 'react';
 import Card from './Card';
 
 export default function QuestLog() {
-  const { currentUser } = useContext(AppContext);
+  const { currentUser, userQuests, updateUserQuests } = useContext(AppContext);
   const { supabaseClient } = useSessionContext();
-  const [userQuests, setUserQuests] = useState([]);
-  useEffect(() => {
-    supabaseClient
-      .channel('profilesquests')
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'profilesquests',
-        },
-        (payload) => {
-          // update userQuests with id of payload.new
-          const index = userQuests.findIndex(
-            (userQuest) => userQuest.id === payload.new.id
-          );
-          const newUserQuests = [...userQuests];
-          newUserQuests[index] = payload.new;
-          setUserQuests(newUserQuests);
-        }
-      )
-      .subscribe();
-  }, []);
 
   useEffect(() => {
     if (currentUser) fetchUserQuests();
@@ -43,7 +20,7 @@ export default function QuestLog() {
 
     if (data) {
       console.log(data);
-      setUserQuests(data);
+      updateUserQuests(data);
     }
   };
 
