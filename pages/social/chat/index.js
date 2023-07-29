@@ -172,6 +172,7 @@ const Chat = () => {
           .from("profilesquests")
           .update({
             values: [...profilequest.values, message],
+            isDone: true,
           })
           .eq("id", profilequest.id);
         setDisplayModalQuestSuccess(true);

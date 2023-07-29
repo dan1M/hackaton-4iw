@@ -130,6 +130,7 @@ const Event = () => {
           .from("profilesquests")
           .update({
             values: [...profilequest.values, formData.name],
+            isDone: true,
           })
           .eq("id", profilequest.id);
         setDisplayModalQuestSuccess(true);

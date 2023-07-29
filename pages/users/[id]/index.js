@@ -137,6 +137,7 @@ export default function Profile() {
             .from("profilesquests")
             .update({
               values: [...profilequest.values, profile.id],
+              isDone: true,
             })
             .eq("id", profilequest.id);
           setDisplayModalQuestSuccess(true);
