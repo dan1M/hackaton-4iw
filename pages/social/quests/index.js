@@ -5,10 +5,12 @@ import { useContext, useEffect, useState } from "react";
 import CustomModal from "@/components/CustomModal";
 import { AppContext } from "@/pages/_app";
 import Title from "@/components/Title";
+import { useRouter } from "next/router";
 
 const Quests = () => {
   const { currentUser } = useContext(AppContext);
   const { supabaseClient } = useSessionContext();
+  const router = useRouter();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalCustomOpen, setIsModalCustomOpen] = useState(false);

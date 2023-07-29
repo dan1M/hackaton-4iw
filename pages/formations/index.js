@@ -3,9 +3,13 @@ import Card from "@/components/Card";
 import { useSessionContext } from "@supabase/auth-helpers-react";
 import { useEffect, useState } from "react";
 import CustomModal from "@/components/CustomModal";
+import Sidebar from "@/components/Sidebar";
+import Title from "@/components/Title";
+import { useRouter } from "next/router";
 
 const Formations = () => {
   const { supabaseClient } = useSessionContext();
+  const router = useRouter();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formations, setFormations] = useState([]);
