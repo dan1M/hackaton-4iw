@@ -352,7 +352,7 @@ const Quests = () => {
             <Card
               key={quest.id}
               id={quest.id}
-              title={quest.name}
+              title={`Nom : ${quest.name}`}
               questDataSingle={quest}
               triggerFetch={id => {
                 if (id) {

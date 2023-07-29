@@ -220,13 +220,13 @@ function Card({
             {questDataSingle && (
               <>
                 <h5 className="mb-1 text-xl font-semibold text-primary">
-                  {questDataSingle.xp}
+                  Xp : {questDataSingle.xp}
                 </h5>
                 <h5 className="mb-1 text-xl font-semibold text-primary">
-                  {questDataSingle.difficulty}
+                  Difficulté : {questDataSingle.difficulty}
                 </h5>
                 <h5 className="mb-1 text-xl font-semibold text-primary">
-                  {questDataSingle.frequency}
+                  Fréquence : {questDataSingle.frequency}
                 </h5>
               </>
             )}

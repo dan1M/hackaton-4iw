@@ -297,7 +297,7 @@ const Event = () => {
             <Card
               key={evenement.id}
               id={evenement.id}
-              title={evenement.name}
+              title={`Nom : ${evenement.name}`}
               triggerFetch={id => {
                 if (id) {
                   setEvenements(
