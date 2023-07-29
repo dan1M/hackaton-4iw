@@ -298,7 +298,6 @@ const Event = () => {
               key={evenement.id}
               id={evenement.id}
               title={evenement.name}
-              imageUrl={"/next.svg"}
               triggerFetch={id => {
                 if (id) {
                   setEvenements(

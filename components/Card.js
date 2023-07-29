@@ -18,6 +18,7 @@ function Card({
   imageUrl,
   triggerFetch,
   quest,
+  questDataSingle,
   type = "default",
 }) {
   const [displayModalDelete, setDisplayModalDelete] = useState(false);
@@ -216,6 +217,19 @@ function Card({
             <h5 className="mb-1 text-xl font-semibold text-primary">
               {quest ? quest.quests.description : title}
             </h5>
+            {questDataSingle && (
+              <>
+                <h5 className="mb-1 text-xl font-semibold text-primary">
+                  {questDataSingle.xp}
+                </h5>
+                <h5 className="mb-1 text-xl font-semibold text-primary">
+                  {questDataSingle.difficulty}
+                </h5>
+                <h5 className="mb-1 text-xl font-semibold text-primary">
+                  {questDataSingle.frequency}
+                </h5>
+              </>
+            )}
             <span className="text-sm text-gray-500 dark:text-gray-400">
               {subtitle}
             </span>

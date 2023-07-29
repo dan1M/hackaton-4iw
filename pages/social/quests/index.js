@@ -353,6 +353,7 @@ const Quests = () => {
               key={quest.id}
               id={quest.id}
               title={quest.name}
+              questDataSingle={quest}
               triggerFetch={id => {
                 if (id) {
                   setQuests(quests.filter(quest => quest.id !== id));
