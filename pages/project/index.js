@@ -211,14 +211,21 @@ const Projects = () => {
           <Button text="Ajouter un projet" onClick={handleOpenModal} />
         )}
       </div>
+      <div>
+        {/* {(role === 'mgr' || role === 'rh') && ( */}
+        <Button text="Ajouter un projet" onClick={handleOpenModal} />
+        {/* )} */}
+      </div>
+
+      {/* Formulaire pour ajouter un projet */}
 
       <div>
-        {(role === "mgr" || role === "rh") && (
-          <Button
-            text="Associer un projet aux développeurs"
-            onClick={handleOpenAssociateModal}
-          />
-        )}
+        {/* {(role === 'mgr' || role === 'rh') && ( */}
+        <Button
+          text="Associer un projet aux développeurs"
+          onClick={handleOpenAssociateModal}
+        />
+        {/* )} */}
       </div>
 
       {/* Formulaire pour ajouter un projet */}

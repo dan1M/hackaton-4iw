@@ -13,7 +13,7 @@ const Formations = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formations, setFormations] = useState([]);
-
+  const [usersWaiting, setUsersWaiting] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     place: "",
@@ -69,6 +69,11 @@ const Formations = () => {
             : statusAttente,
         };
       });
+      const hasUsersWaiting = formationsWithStatus.some(
+        formation => formation.status === "En attente d'acceptation"
+      );
+
+      setUsersWaiting(hasUsersWaiting);
 
       setFormations(formationsWithStatus);
     } catch (error) {}
@@ -110,12 +115,21 @@ const Formations = () => {
   const isRole = role === "mgr" || role === "rh";
 
   return (
-    <main className="p-4 w-full">
-      <Title text="Formation" />
-      <br />
-      {isRole && (
+    <main className="p-4">
+      <div className="flex">
         <Button text="Ajouter une formation" onClick={handleOpenModal} />
-      )}
+
+        <div>
+          {isRole && (
+            <Button
+              text="Liste de demandes des formations"
+              onClick={() => {
+                router.push("/list");
+              }}
+            />
+          )}
+        </div>
+      </div>
 
       <CustomModal
         isOpen={isModalOpen}
