@@ -4,6 +4,7 @@ import Message from "../../../components/Message";
 import Button from "@/components/Button";
 import CustomModal from "@/components/CustomModal";
 import Conversation from "@/components/Conversation";
+import { useRouter } from "next/router";
 import Lottie from "lottie-react";
 
 import confetti from "../../../public/animations/confetti.json";
@@ -12,6 +13,7 @@ import { AppContext } from "@/pages/_app";
 const Chat = () => {
   const { currentUser, updateCurrentUser } = useContext(AppContext);
   const { supabaseClient } = useSessionContext();
+  const router = useRouter();
 
   const [message, setMessage] = useState([]);
   const [messages, setMessages] = useState([]);
@@ -26,6 +28,13 @@ const Chat = () => {
   const [conversationId, setConversationId] = useState(null);
 
   const [newConversationuser, setNewConversationUser] = useState();
+
+  useEffect(() => {
+    const user = JSON.parse(sessionStorage.getItem("user"));
+    if (!user) {
+      router.push("/login");
+    }
+  }, []);
 
   const fetchMessages = async (id = 0) => {
     console.log("CONV ID : ", conversationId);

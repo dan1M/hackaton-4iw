@@ -40,14 +40,6 @@ export default function App({ Component, pageProps }) {
     if (user) {
       setCurrentUser(JSON.parse(user));
     }
-
-    // Vérifier si l'utilisateur doit être redirigé
-    const shouldRedirect = monMiddleware({ url: router.asPath });
-
-    // Effectuer la redirection si nécessaire
-    if (shouldRedirect) {
-      router.push("/login");
-    }
   }, []);
 
   useEffect(() => {
