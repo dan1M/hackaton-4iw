@@ -1,11 +1,11 @@
-import QuestLog from '@/components/QuestLog';
-import RpgZone from '@/components/RpgZone';
-import Sidebar from '@/components/Sidebar';
-import '@/styles/globals.css';
-import { createPagesBrowserClient } from '@supabase/auth-helpers-nextjs';
-import { SessionContextProvider } from '@supabase/auth-helpers-react';
-import { useRouter } from 'next/router';
-import { createContext, useEffect, useState } from 'react';
+import QuestLog from "@/components/QuestLog";
+import RpgZone from "@/components/RpgZone";
+import Sidebar from "@/components/Sidebar";
+import "@/styles/globals.css";
+import { createPagesBrowserClient } from "@supabase/auth-helpers-nextjs";
+import { SessionContextProvider } from "@supabase/auth-helpers-react";
+import { useRouter } from "next/router";
+import { createContext, useEffect, useState } from "react";
 
 export const AppContext = createContext(null);
 
@@ -17,21 +17,21 @@ export default function App({ Component, pageProps }) {
   const [userQuests, setUserQuests] = useState([]);
 
   useEffect(() => {
-    const user = sessionStorage.getItem('user');
+    const user = sessionStorage.getItem("user");
 
     // listener for user update
     supabaseClient
-      .channel('profiles')
+      .channel("profiles")
       .on(
-        'postgres_changes',
+        "postgres_changes",
         {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'profiles',
+          event: "UPDATE",
+          schema: "public",
+          table: "profiles",
         },
-        (payload) => {
+        payload => {
           const dataUser = JSON.stringify(payload.new);
-          sessionStorage.setItem('user', dataUser);
+          sessionStorage.setItem("user", dataUser);
           setCurrentUser(payload.new);
         }
       )
@@ -46,17 +46,17 @@ export default function App({ Component, pageProps }) {
     if (currentUser) {
       // listener for userQuests update
       supabaseClient
-        .channel('profilesquests')
+        .channel("profilesquests")
         .on(
-          'postgres_changes',
+          "postgres_changes",
           {
-            event: 'UPDATE',
-            schema: 'public',
-            table: 'profilesquests',
+            event: "UPDATE",
+            schema: "public",
+            table: "profilesquests",
           },
-          (payload) => {
+          payload => {
             // update a quest of currentUser from userQuests
-            const updatedUserQuests = userQuests.map((quest) => {
+            const updatedUserQuests = userQuests.map(quest => {
               if (quest.id === payload.new.id) {
                 return { ...quest, ...payload.new };
               }
@@ -69,11 +69,11 @@ export default function App({ Component, pageProps }) {
     }
   }, [currentUser, userQuests]);
 
-  const updateCurrentUser = (user) => {
+  const updateCurrentUser = user => {
     setCurrentUser(user);
   };
 
-  const updateUserQuests = (quests) => {
+  const updateUserQuests = quests => {
     setUserQuests(quests);
   };
 
@@ -85,11 +85,11 @@ export default function App({ Component, pageProps }) {
       <AppContext.Provider
         value={{ currentUser, updateCurrentUser, userQuests, updateUserQuests }}
       >
-        {router.pathname !== '/login' ? (
-          <div className='flex relative'>
+        {router.pathname !== "/login" ? (
+          <div className="flex relative">
             <Sidebar />
             <Component {...pageProps} />
-            {router.pathname.startsWith('/social') && (
+            {router.pathname.startsWith("/social") && (
               <>
                 <QuestLog />
                 <RpgZone />

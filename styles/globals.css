@@ -74,3 +74,23 @@ li {
   cursor: pointer;
 }
 
+/* Cacher l'input file par défaut */
+.input-file {
+  display: none;
+}
+
+.file-label {
+  display: inline-block;
+  padding: 10px 20px;
+  border: 1px solid #ccc;
+  background-color: #282B2A;
+  cursor: pointer;
+  border-radius: 10px;
+  /* padding-right: 7px; */
+}
+
+.file-label:hover {
+  background-color: #5B98D2;
+}
+/* 'relative inline-flex items-center justify-center font-medium rounded-full text-sm p-0.5 mb-3 text-white group bg-gradient-to-br from-secondary to-carbon-blue group-hover:from-secondary group-hover:carbon-blue '; */
+
