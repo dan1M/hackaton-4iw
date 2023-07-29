@@ -150,8 +150,6 @@ export default function Profile() {
             .eq("id", profilequest.id);
         }
       }
-
-      console.log("quest", quest);
     });
   };
 
@@ -256,14 +254,14 @@ export default function Profile() {
       </CustomModal>
       <div className="w-full h-28 bg-opacity-10 bg-slate-300 flex relative ">
         <div className="flex items-center absolute -bottom-2/3 left-1/2 -translate-x-1/2 z-10">
-          <div class="custom-file-input p-5">
+          <div className="custom-file-input p-5">
             <input
               type="file"
               id="fileInput"
-              class="input-file"
+              className="input-file"
               onChange={handleFileChange}
             />
-            <label for="fileInput" class="file-label">
+            <label htmlFor="fileInput" className="file-label">
               +
             </label>
           </div>
