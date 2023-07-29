@@ -19,6 +19,13 @@ export default function Profile() {
   const [displayModalQuestSuccess, setDisplayModalQuestSuccess] =
     useState(false);
 
+  useEffect(() => {
+    const user = JSON.parse(sessionStorage.getItem("user"));
+    if (!user) {
+      router.push("/login");
+    }
+  }, []);
+
   const fetchProfile = async () => {
     const { data, error } = await supabaseClient
       .from("profiles")

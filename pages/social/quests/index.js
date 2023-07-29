@@ -62,6 +62,13 @@ const Quests = () => {
   };
 
   useEffect(() => {
+    const user = JSON.parse(sessionStorage.getItem("user"));
+    if (!user) {
+      router.push("/login");
+    }
+  }, []);
+
+  useEffect(() => {
     fetchQuests();
   }, []);
 

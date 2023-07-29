@@ -37,13 +37,18 @@ const Formations = () => {
   };
 
   useEffect(() => {
+    const user = JSON.parse(sessionStorage.getItem("user"));
+    if (!user) {
+      router.push("/login");
+    }
+  }, []);
+
+  useEffect(() => {
     fetchFormations();
   }, []);
-  
+
   const fetchFormations = async () => {
-    const { data, error } = await supabaseClient
-      .from("formations")
-      .select(`
+    const { data, error } = await supabaseClient.from("formations").select(`
         *,
         profilesformations:profilesformations(*)
       `);
@@ -79,19 +84,25 @@ const Formations = () => {
     fetchFormations();
   };
 
-  const user = typeof window !== 'undefined' ? JSON.parse(sessionStorage.getItem('user')) : null;
+  const user =
+    typeof window !== "undefined"
+      ? JSON.parse(sessionStorage.getItem("user"))
+      : null;
   const role = user?.role;
 
-  const formationStatus = typeof window != "undefined" ? JSON.parse(sessionStorage.getItem("profilesformations")) : null;
+  const formationStatus =
+    typeof window != "undefined"
+      ? JSON.parse(sessionStorage.getItem("profilesformations"))
+      : null;
   const status = formationStatus?.status;
 
   console.log(status);
 
-  const isRole = role === 'mgr' || role === 'rh';
-  
+  const isRole = role === "mgr" || role === "rh";
+
   return (
     <main className="p-4">
-        <Button text="Ajouter une formation" onClick={handleOpenModal} />
+      <Button text="Ajouter une formation" onClick={handleOpenModal} />
 
       <CustomModal
         isOpen={isModalOpen}
@@ -185,7 +196,7 @@ const Formations = () => {
         </div>
       </CustomModal>
       <div className="flex flex-wrap">
-      {formations?.map((formation) => {
+        {formations?.map(formation => {
           const formationStatus = formation.profilesformations?.[0]?.status;
           return (
             <Card
@@ -195,9 +206,11 @@ const Formations = () => {
               duration={formation.duration}
               formationStatus={formationStatus}
               imageUrl={"next.svg"}
-              triggerFetch={(id) => {
+              triggerFetch={id => {
                 if (id) {
-                  setFormations(formations.filter((formation) => formation.id !== id));
+                  setFormations(
+                    formations.filter(formation => formation.id !== id)
+                  );
                 } else {
                   fetchFormations();
                 }
@@ -208,7 +221,6 @@ const Formations = () => {
         })}
       </div>
     </main>
-
   );
 };
 
