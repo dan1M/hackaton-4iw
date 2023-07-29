@@ -321,7 +321,7 @@ function Card({
               router.push(`/users/${id}`);
               break;
             case "project":
-              router.push(`/projects/${id}`);
+              router.push(`/project/${id}`);
               break;
             case "event":
               router.push(`/social/events/${id}`);
@@ -470,15 +470,17 @@ function Card({
                 }}
               />
             )}
+
             {type === "event" && !user && (
               <p>Please log in to register for this event.</p>
             )}
           </div>
+
           <div style={{ textAlign: "center", cursor: "pointer" }}>
             {type === "formation" && user && (
               <Button
                 text={inscription ? "Se désinscrire" : "S'inscrire"}
-                onClick={() => {
+                onClick={e => {
                   e.preventDefault();
                   e.stopPropagation();
                   handleRegisterFormation(id);
@@ -581,6 +583,7 @@ function Card({
                 id={id}
                 triggerFetch={() => {
                   triggerFetch();
+
                   setDisplayModalEdit(false);
                 }}
               />
