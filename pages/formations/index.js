@@ -6,6 +6,7 @@ import CustomModal from "@/components/CustomModal";
 import Sidebar from "@/components/Sidebar";
 import Title from "@/components/Title";
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 const Formations = () => {
   const { supabaseClient } = useSessionContext();
@@ -114,20 +115,34 @@ const Formations = () => {
 
   const isRole = role === "mgr" || role === "rh";
 
+  const styles = {
+    list: {
+      border: "1px solid #fff",
+      borderRadius: "30px",
+      padding: "10px",
+      heigth: "5px",
+      width: "50px",
+      marginTop: "10%",
+      textAlign: "center",
+      color: "#fff",
+    },
+  };
+
   return (
     <main className="p-4">
       <div className="flex">
-        <Button text="Ajouter une formation" onClick={handleOpenModal} />
+        <div className="flex">
+          <Button text="Ajouter une formation" onClick={handleOpenModal} />
+        </div>
 
-        <div>
-          {isRole && (
-            <Button
-              text="Liste de demandes des formations"
-              onClick={() => {
-                router.push("/list");
-              }}
-            />
-          )}
+        <div className="mt-2 ml-4">
+          <Link
+            href="/list"
+            style={styles.list}
+            className="hover:bg-gradient-to-br from-secondary to-carbon-blue group-hover:from-secondary group-hover:carbon-blue"
+          >
+            voire la liste de demandes
+          </Link>
         </div>
       </div>
 

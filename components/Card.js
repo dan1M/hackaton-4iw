@@ -399,6 +399,11 @@ function Card({
             )}
           </div>
           <div className="flex flex-col items-center ">
+            {inscription && (
+              <div className="text-xl w-24 text-black text-green-700 text-center">
+                {status}
+              </div>
+            )}
             {imageUrl && (
               <Image
                 className="w-24 h-24 mb-3 rounded-full shadow-lg"

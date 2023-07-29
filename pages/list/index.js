@@ -63,7 +63,7 @@ const List = () => {
   const handleAcceptFormation = async (formationId) => {
     const { error } = await supabaseClient
       .from("profilesformations")
-      .update({ status: "votre demande est accepter 😁 🤟🔥" })
+      .update({ status: "✅" })
       .eq("id", formationId);
 
     if (error) {
