@@ -326,6 +326,12 @@ function Card({
             case "event":
               router.push(`/social/events/${id}`);
               break;
+            case "quests":
+              router.push(`/social/quests/${id}`);
+              break;
+            case "formation":
+              router.push(`/formations/${id}`);
+              break;
             default:
           }
         }}

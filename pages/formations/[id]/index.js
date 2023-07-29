@@ -1,37 +1,39 @@
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useSessionContext } from '@supabase/auth-helpers-react';
-import ProfileProject from '@/components/projectview/ProfileProjects';
-import Loader from '@/components/Loading'; 
+import ProfileFormation from '@/components/formationview/ProfileFormation';
+import Loader from '@/components/Loading';
 
-export default function ViewProject() {
+export default function ViewClient() {
   const router = useRouter();
   const { id } = router.query;
   const { supabaseClient } = useSessionContext();
-  const [project, setProject] = useState(null);
+  const [formation, setFormation] = useState(null);
   const [isLoading, setIsLoading] = useState(true); 
 
-  const fetchProject = async () => {
+  const fetchFormation = async () => {
     try {
       await new Promise((resolve) => setTimeout(resolve, 1000));
+
       const { data, error } = await supabaseClient
-        .from('projects')
+        .from('formations')
         .select("*")
         .eq('id', id)
         .single();
+
       if (data) {
-        setProject(data);
-        setIsLoading(false); 
+        setFormation(data);
       }
     } catch (error) {
-      console.error('Error fetching project:', error.message);
+      console.error('Error fetching formation:', error.message);
+    } finally {
       setIsLoading(false); 
     }
   };
 
   useEffect(() => {
     if (id) {
-      fetchProject();
+        fetchFormation();
     }
   }, [id]);
 
@@ -39,11 +41,11 @@ export default function ViewProject() {
     <main className="w-full text-white">
       <div className="w-full h-screen flex justify-center items-center -mt-24">
         {isLoading ? (
-          <Loader /> 
-        ) : project ? (
-          <ProfileProject project={project} /> 
+          <Loader />
+        ) : formation ? (
+          <ProfileFormation formation={formation} />
         ) : (
-          <p>Project not found.</p> 
+          <p>Client not found.</p>
         )}
       </div>
     </main>
