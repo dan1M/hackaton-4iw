@@ -53,7 +53,7 @@ export default function RpgZone() {
         {currentUser && (
           <Image
             className="w-16 h-16 rounded-full mr-8 shadow-lg"
-            src={currentUser?.imageUrl ?? "/next.svg"}
+            src={currentUser?.imageUrl ?? "/noImage.jpeg"}
             alt=""
             width={50}
             height={50}

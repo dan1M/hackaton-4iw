@@ -105,7 +105,7 @@ const Formations = () => {
   const isRole = role === "mgr" || role === "rh";
 
   return (
-    <main className="p-4">
+    <main className="p-4 w-full">
       <Button text="Ajouter une formation" onClick={handleOpenModal} />
 
       <CustomModal
@@ -209,7 +209,6 @@ const Formations = () => {
               title={formation.name}
               duration={formation.duration}
               formationStatus={formationStatus}
-              imageUrl={"next.svg"}
               triggerFetch={id => {
                 if (id) {
                   setFormations(

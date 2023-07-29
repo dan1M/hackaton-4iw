@@ -403,7 +403,7 @@ const Projects = () => {
             key={project.id}
             id={project.id}
             title={project.name}
-            imageUrl={"next.svg"}
+            imageUrl={"noImage.jpeg"}
             triggerFetch={id => {
               if (id) {
                 setProjects(projects.filter(project => project.id !== id));

@@ -269,7 +269,7 @@ export default function Profile() {
           {profile && profile.imageUrl && (
             <Image
               className="w-24 h-24 rounded-full shadow-lg bg-white"
-              src={profile.avatar_url ? profile.imageUrl : "./next.svg"}
+              src={profile.avatar_url ? profile.imageUrl : "/noImage.jpeg"}
               alt=""
               width={50}
               height={50}

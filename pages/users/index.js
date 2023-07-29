@@ -22,7 +22,17 @@ const Users = () => {
 
   const fetchUsers = async () => {
     const { data } = await supabaseClient.from("profiles").select("*");
-    setUsers(data);
+    const usersWithImages = await Promise.all(
+      data.map(async user => {
+        const { data: publicUrl } = await supabaseClient.storage
+          .from("uploads")
+          .getPublicUrl(`contents/${user.avatar_url}`);
+
+        user.imageUrl = publicUrl.publicUrl;
+        return user;
+      })
+    );
+    setUsers(usersWithImages);
   };
   const handleChange = e => {
     const { name, value } = e.target;
@@ -219,7 +229,7 @@ const Users = () => {
               id={user.id}
               title={user.full_name}
               subtitle={user.job_title}
-              imageUrl={"/next.svg"}
+              imageUrl={user.avatar_url ? user.imageUrl : "/noImage.jpeg"}
               triggerFetch={id => {
                 if (id) {
                   setUsers(users.filter(user => user.id !== id));
