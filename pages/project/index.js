@@ -5,6 +5,7 @@ import CustomModal from "@/components/CustomModal";
 import { useSessionContext } from "@supabase/auth-helpers-react";
 import { AppContext } from "../_app";
 import { useContext } from "react";
+import Title from "@/components/Title";
 
 const Projects = () => {
   const { supabaseClient } = useSessionContext();
@@ -208,6 +209,8 @@ const Projects = () => {
 
   return (
     <main className="p-4 w-full">
+      <Title text="Projet" />
+      <br />
       <div className="flex">
         <div>
           {(role === "com" || role === "rh") && (
