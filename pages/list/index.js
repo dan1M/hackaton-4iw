@@ -170,7 +170,7 @@ const List = () => {
                         className={styles.cancelBtn}
                         onClick={() => handleCancelFormation(formation.id)}
                       >
-                        Réfuser
+                        Refuser
                       </button>
                     </>
                   )}

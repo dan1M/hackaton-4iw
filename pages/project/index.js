@@ -406,7 +406,7 @@ const Projects = () => {
           <Card
             key={project.id}
             id={project.id}
-            title={project.name}
+            title={`Projet : ${project.name}`}
             // imageUrl={"noImage.jpeg"}
             triggerFetch={id => {
               if (id) {

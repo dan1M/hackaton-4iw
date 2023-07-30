@@ -31,7 +31,7 @@ export default function RpgZone() {
   };
 
   return (
-    <div className="fixed bottom-0 right-0 rounded-lg w-4/5 h-20 bg-white">
+    <div className="fixed bottom-0 right-0 rounded-lg w-5/6 h-20 bg-white">
       <div className="flex items-center h-full max-w-5xl mx-auto">
         {currentUser && (
           <Image

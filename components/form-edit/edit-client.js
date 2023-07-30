@@ -41,7 +41,7 @@ export default function FormClient({ id, triggerFetch }) {
   const updateClient = async e => {
     e.preventDefault();
 
-    if (selectedImage.name) {
+    if (selectedImage && selectedImage.name) {
       const { data } = await supabaseClient.storage
         .from("uploads/contents")
         .upload(selectedImage.name, selectedImage);

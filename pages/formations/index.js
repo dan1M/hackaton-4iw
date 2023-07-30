@@ -6,12 +6,15 @@ import CustomModal from "@/components/CustomModal";
 import Title from "@/components/Title";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { useContext } from "react";
+import { AppContext } from "../_app";
 
 const Formations = () => {
   const { supabaseClient } = useSessionContext();
   const router = useRouter();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { currentUser } = useContext(AppContext);
   const [formations, setFormations] = useState([]);
   const [usersWaiting, setUsersWaiting] = useState(false);
   const [formData, setFormData] = useState({
@@ -112,9 +115,6 @@ const Formations = () => {
     typeof window !== "undefined"
       ? JSON.parse(sessionStorage.getItem("user"))
       : null;
-  const role = user?.role;
-
-  const isRole = role === "mgr" || role === "rh";
 
   const styles = {
     list: {
@@ -134,22 +134,26 @@ const Formations = () => {
       <Title text="Formations" />
       <br />
       <div className="flex">
-        {isRole && (
-          <>
-            <div className="flex">
-              <Button text="Ajouter une formation" onClick={handleOpenModal} />
-            </div>
-            <div className="mt-2 ml-4">
-              <Link
-                href="/list"
-                style={styles.list}
-                className="hover:bg-gradient-to-br from-secondary to-carbon-blue group-hover:from-secondary group-hover:carbon-blue"
-              >
-                Liste des demandes
-              </Link>
-            </div>
-          </>
-        )}
+        {currentUser &&
+          (currentUser.role === "rh" || currentUser.role === "mgr") && (
+            <>
+              <div className="flex">
+                <Button
+                  text="Ajouter une formation"
+                  onClick={handleOpenModal}
+                />
+              </div>
+              <div className="mt-2 ml-4">
+                <Link
+                  href="/list"
+                  style={styles.list}
+                  className="hover:bg-gradient-to-br from-secondary to-carbon-blue group-hover:from-secondary group-hover:carbon-blue"
+                >
+                  Liste des demandes
+                </Link>
+              </div>
+            </>
+          )}
       </div>
 
       <CustomModal

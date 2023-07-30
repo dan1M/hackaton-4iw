@@ -10,6 +10,8 @@ import FormEvent from "./form-edit/edit-event";
 import FormQuest from "./form-edit/edit-quest";
 import FormFormation from "./form-edit/edit-formation";
 import { ProgressBar } from "./ProgressBar";
+import { useContext } from "react";
+import { AppContext } from "@/pages/_app";
 
 function Card({
   id,
@@ -29,6 +31,7 @@ function Card({
   const { supabaseClient } = useSessionContext();
   const [questData, setQuestData] = useState(null);
   const router = useRouter();
+  const { currentUser } = useContext(AppContext);
 
   const user = JSON.parse(sessionStorage.getItem("user"));
 
@@ -338,84 +341,89 @@ function Card({
         }}
       >
         <div className="p-4 bg-white rounded-md">
-          <div className="flex justify-end  relative ">
-            {!quest && (
-              <button
-                onClick={handleShowDropdown}
-                id="dropdownButton"
-                data-dropdown-toggle="dropdown"
-                className="inline-block text-primary hover:bg-gray-100 rounded-lg text-sm p-1.5"
-                type="button"
-              >
-                <span className="sr-only">Open dropdown</span>
-                <svg
-                  className="w-5 h-5"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="currentColor"
-                  viewBox="0 0 16 3"
+          {currentUser && currentUser.role === "rh" && (
+            <div className="flex justify-end  relative ">
+              {!quest && (
+                <button
+                  onClick={handleShowDropdown}
+                  id="dropdownButton"
+                  data-dropdown-toggle="dropdown"
+                  className="inline-block text-primary hover:bg-gray-100 rounded-lg text-sm p-1.5"
+                  type="button"
                 >
-                  <path d="M2 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm6.041 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM14 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Z" />
-                </svg>
-              </button>
-            )}
+                  <span className="sr-only">Open dropdown</span>
+                  <svg
+                    className="w-5 h-5"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="currentColor"
+                    viewBox="0 0 16 3"
+                  >
+                    <path d="M2 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm6.041 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM14 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Z" />
+                  </svg>
+                </button>
+              )}
 
-            {showDropdown && !quest && (
-              <div
-                id="dropdown"
-                className=" absolute right-12 z-10 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-primary"
-              >
-                <ul className="py-2" aria-labelledby="dropdownButton">
-                  {type !== "user" &&
-                    title !== "Parler" &&
-                    title !== "Visiter Profil" &&
-                    title !== "Créer Evenement" && (
-                      <>
-                        <li>
-                          <a
-                            onClick={e => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              setDisplayModalEdit(true);
-                              setShowDrown(false);
-                            }}
-                            href="#"
-                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-                          >
-                            Modifier
-                          </a>
-                        </li>
-                      </>
-                    )}
-                  <li>
-                    <a
-                      onClick={e => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        setShowDrown(false);
-                        setDisplayModalDelete(true);
-                      }}
-                      href="#"
-                      className="block px-4 py-2 text-sm text-secondary hover:bg-gray-100 dark:hover:bg-gray-600"
-                    >
-                      Supprimer
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            )}
-          </div>
+              {showDropdown && !quest && (
+                <div
+                  id="dropdown"
+                  className=" absolute right-12 z-10 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-primary"
+                >
+                  <ul className="py-2" aria-labelledby="dropdownButton">
+                    {type !== "user" &&
+                      title !== "Parler" &&
+                      title !== "Visiter Profil" &&
+                      title !== "Créer Evenement" && (
+                        <>
+                          <li>
+                            <a
+                              onClick={e => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                setDisplayModalEdit(true);
+                                setShowDrown(false);
+                              }}
+                              href="#"
+                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+                            >
+                              Modifier
+                            </a>
+                          </li>
+                        </>
+                      )}
+                    <li>
+                      <a
+                        onClick={e => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setShowDrown(false);
+                          setDisplayModalDelete(true);
+                        }}
+                        href="#"
+                        className="block px-4 py-2 text-sm text-secondary hover:bg-gray-100 dark:hover:bg-gray-600"
+                      >
+                        Supprimer
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
+
           <div className="flex flex-col items-center ">
-            {inscription && type === "formation" && status === "✅" ? (
+            {inscription && status === "✅" ? (
               <div className="text-xl w-24 text-black text-green-700 text-center">
                 {status}
               </div>
-            ) : inscription && type === "formation" ? (
+            ) : inscription ? (
               <div className="text-xl w-24 text-black text-green-700 text-center">
                 {"⏳"}
               </div>
             ) : (
-              <div className="text-xl w-24 text-white  text-center"></div>
+              <div className="text-xl w-24 text-white  text-center">
+                {"test"}
+              </div>
             )}
             {imageUrl && (
               <Image

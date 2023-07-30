@@ -91,9 +91,25 @@ const Sidebar = () => {
                 className="flex items-center justify-center space-x-2 text-white text-l hover:bg-gradient-to-br from-secondary to-carbon-blue group-hover:from-secondary group-hover:carbon-blue"
                 style={styles.li}
               >
+                <Image
+                  src="/pictos/gi.png"
+                  style={styles.icon}
+                  alt=""
+                  className="hover:bg-gradient-to-br from-secondary to-carbon-blue group-hover:from-secondary group-hover:carbon-blue"
+                  width={20}
+                  height={20}
+                />
+                <Link href="/social/bonus" style={styles.icon}>
+                  Bonus
+                </Link>
+              </li>
+              <li
+                className="flex items-center justify-center space-x-2 text-white text-l hover:bg-gradient-to-br from-secondary to-carbon-blue group-hover:from-secondary group-hover:carbon-blue"
+                style={styles.li}
+              >
                 <Link href="/social/events" style={styles.icon}>
                   <BiCalendar style={styles.io} className="w-10" />
-                  Evènements
+                  Event
                 </Link>
               </li>
               <li
@@ -104,7 +120,8 @@ const Sidebar = () => {
                   src="/pictos/quete.png"
                   style={styles.icon}
                   className="hover:bg-gradient-to-br from-secondary to-carbon-blue group-hover:from-secondary group-hover:carbon-blue"
-                  width={35}
+                  width={20}
+                  alt=""
                   height={20}
                 />
                 <Link href="/social/quests" style={styles.icon}>
@@ -146,6 +163,16 @@ const Sidebar = () => {
           <li className="flex items-center space-x-2 li-side">
             <Image
               alt="logo"
+              src="/pictos/projet.png"
+              width={20}
+              height={20}
+              className="mx-4"
+            />
+            <Link href="/project">Projets</Link>
+          </li>
+          <li className="flex items-center space-x-2 li-side">
+            <Image
+              alt="logo"
               src="/pictos/myAccount.png"
               width={20}
               height={20}
@@ -154,6 +181,16 @@ const Sidebar = () => {
             {currentUser && currentUser.id && (
               <Link href={`/users/${currentUser.id}`}>Mon compte</Link>
             )}
+          </li>
+          <li className="flex items-center space-x-2 li-side">
+            <Image
+              alt="logo"
+              src="/pictos/logout.png"
+              width={20}
+              height={20}
+              className="mx-4"
+            />
+            <Link href="/login">Se déconnecter</Link>
           </li>
         </ul>
       </div>
