@@ -59,6 +59,8 @@ const Formations = () => {
       if (profilesFormationsError) {
         return;
       }
+
+      console.log("Profil formation Data : ", profilesFormationsData);
       const formationsWithStatus = formationsData.map(formation => {
         const matchingProfileFormation = profilesFormationsData.find(
           profileFormation => profileFormation.formation_id === formation.id
@@ -75,6 +77,8 @@ const Formations = () => {
       );
 
       setUsersWaiting(hasUsersWaiting);
+
+      console.log("USER WAITING : ", formationsWithStatus);
 
       setFormations(formationsWithStatus);
     } catch (error) {}
@@ -246,7 +250,7 @@ const Formations = () => {
               id={formation.id}
               title={formation.name}
               duration={formation.duration}
-              formationStatus={formationStatus}
+              status={formation.status}
               triggerFetch={id => {
                 if (id) {
                   setFormations(

@@ -12,7 +12,7 @@ import FormFormation from "./form-edit/edit-formation";
 import { ProgressBar } from "./ProgressBar";
 
 function Card({
-  id, 
+  id,
   title,
   subtitle,
   status,
@@ -33,6 +33,7 @@ function Card({
   const user = JSON.parse(sessionStorage.getItem("user"));
 
   useEffect(() => {
+    console.log("Stautt : ", status);
     if (quest) setQuestData(quest);
   }, [quest]);
 
@@ -69,7 +70,7 @@ function Card({
         .eq("formation_id", formationId)
         .eq("profile_id", profileId)
         .single();
-        console.log(data)
+      console.log(data);
       if (data) {
         return true;
       } else {
@@ -80,8 +81,6 @@ function Card({
       return false;
     }
   };
-
-
 
   const handleRegisterFormation = async formationId => {
     try {
@@ -147,7 +146,7 @@ function Card({
 
   //for event
 
-  const handleRegisterEvent= async eventId => {
+  const handleRegisterEvent = async eventId => {
     try {
       if (!user) {
         return;
@@ -209,30 +208,26 @@ function Card({
     }
   };
 
-    //for event
-    const isUserRegisteredEvent = async (
-      eventId,
-       profileId,
-       supabaseClient
-     ) => {
-       try {
-         const { data, error } = await supabaseClient
-           .from("profilesevents")
-           .select("*")
-           .eq("event_id", eventId)
-           .eq("profile_id", profileId)
-           .single();
-           console.log(data)
-         if (data) {
-           return true;
-         } else {
-           return false;
-         }
-       } catch (error) {
-         console.error("Error checking event registration:", error.message);
-         return false;
-       }
-     };
+  //for event
+  const isUserRegisteredEvent = async (eventId, profileId, supabaseClient) => {
+    try {
+      const { data, error } = await supabaseClient
+        .from("profilesevents")
+        .select("*")
+        .eq("event_id", eventId)
+        .eq("profile_id", profileId)
+        .single();
+      console.log(data);
+      if (data) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      console.error("Error checking event registration:", error.message);
+      return false;
+    }
+  };
   const customStyles = {
     content: {
       top: "50%",
@@ -252,7 +247,7 @@ function Card({
       zIndex: 1000,
     },
   };
-  const deleteClient = async id => {
+  const deleteCard = async id => {
     triggerFetch(id);
     if (id) {
       switch (type) {
@@ -411,9 +406,17 @@ function Card({
             )}
           </div>
           <div className="flex flex-col items-center ">
-            {inscription && (
+            {inscription && status === "✅" ? (
               <div className="text-xl w-24 text-black text-green-700 text-center">
                 {status}
+              </div>
+            ) : inscription ? (
+              <div className="text-xl w-24 text-black text-green-700 text-center">
+                {"⏳"}
+              </div>
+            ) : (
+              <div className="text-xl w-24 text-white  text-center">
+                {"test"}
               </div>
             )}
             {imageUrl && (
@@ -539,7 +542,7 @@ function Card({
                 text="Confirmer"
                 type="submit"
                 onClick={() => {
-                  deleteClient(id);
+                  deleteCard(id);
                   setDisplayModalDelete(false);
                 }}
               />
