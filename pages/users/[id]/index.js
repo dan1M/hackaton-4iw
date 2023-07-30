@@ -254,17 +254,19 @@ export default function Profile() {
       </CustomModal>
       <div className="w-full h-28 bg-opacity-10 bg-slate-300 flex relative ">
         <div className="flex items-center absolute -bottom-2/3 left-1/2 -translate-x-1/2 z-10">
-          <div className="custom-file-input p-5">
-            <input
-              type="file"
-              id="fileInput"
-              className="input-file"
-              onChange={handleFileChange}
-            />
-            <label htmlFor="fileInput" className="file-label">
-              +
-            </label>
-          </div>
+          {currentUser && currentUser.id === router.query.id && (
+            <div className="custom-file-input p-5">
+              <input
+                type="file"
+                id="fileInput"
+                className="input-file"
+                onChange={handleFileChange}
+              />
+              <label htmlFor="fileInput" className="file-label">
+                +
+              </label>
+            </div>
+          )}
 
           {profile && profile.imageUrl && (
             <Image
@@ -315,5 +317,3 @@ export default function Profile() {
     </main>
   );
 }
-
-

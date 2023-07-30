@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useSessionContext } from "@supabase/auth-helpers-react";
 import Button from "@/components/Button";
 import Title from "@/components/Title";
+import { useRouter } from "next/router";
 
 const List = () => {
   const { supabaseClient } = useSessionContext();
@@ -9,6 +10,20 @@ const List = () => {
   const [formations, setFormations] = useState([]);
   const [formationData, setFormationData] = useState({});
   const [userData, setUserData] = useState({});
+  const router = useRouter();
+
+  useEffect(() => {
+    const user = JSON.parse(sessionStorage.getItem("user"));
+    if (!user) {
+      router.push("/login");
+    }
+
+    console.log("ROLE USEER : ", user.role);
+
+    if (user.role != "mgr" && user.role != "rh") {
+      router.push("/social/quests");
+    }
+  }, []);
 
   useEffect(() => {
     fetchFormations();

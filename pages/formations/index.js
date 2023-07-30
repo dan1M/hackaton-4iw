@@ -3,7 +3,6 @@ import Card from "@/components/Card";
 import { useSessionContext } from "@supabase/auth-helpers-react";
 import { useEffect, useState } from "react";
 import CustomModal from "@/components/CustomModal";
-import Sidebar from "@/components/Sidebar";
 import Title from "@/components/Title";
 import { useRouter } from "next/router";
 import Link from "next/link";
@@ -78,8 +77,6 @@ const Formations = () => {
 
       setUsersWaiting(hasUsersWaiting);
 
-      console.log("USER WAITING : ", formationsWithStatus);
-
       setFormations(formationsWithStatus);
     } catch (error) {}
   };
@@ -134,20 +131,25 @@ const Formations = () => {
 
   return (
     <main className="p-4 w-full">
+      <Title text="Formations" />
+      <br />
       <div className="flex">
-        <div className="flex">
-          <Button text="Ajouter une formation" onClick={handleOpenModal} />
-        </div>
-
-        <div className="mt-2 ml-4">
-          <Link
-            href="/list"
-            style={styles.list}
-            className="hover:bg-gradient-to-br from-secondary to-carbon-blue group-hover:from-secondary group-hover:carbon-blue"
-          >
-            voire la liste de demandes
-          </Link>
-        </div>
+        {isRole && (
+          <>
+            <div className="flex">
+              <Button text="Ajouter une formation" onClick={handleOpenModal} />
+            </div>
+            <div className="mt-2 ml-4">
+              <Link
+                href="/list"
+                style={styles.list}
+                className="hover:bg-gradient-to-br from-secondary to-carbon-blue group-hover:from-secondary group-hover:carbon-blue"
+              >
+                Liste des demandes
+              </Link>
+            </div>
+          </>
+        )}
       </div>
 
       <CustomModal

@@ -3,6 +3,8 @@ import Button from "@/components/Button";
 import Card from "@/components/Card";
 import CustomModal from "@/components/CustomModal";
 import { useSessionContext } from "@supabase/auth-helpers-react";
+import { AppContext } from "../_app";
+import { useContext } from "react";
 
 const Projects = () => {
   const { supabaseClient } = useSessionContext();
@@ -12,6 +14,7 @@ const Projects = () => {
   const [projects, setProjects] = useState([]);
   const [clients, setClients] = useState([]);
   const [users, setUsers] = useState([]);
+  const { currentUser } = useContext(AppContext);
   const [formData, setFormData] = useState({
     name: "",
     client_id: "",
@@ -207,18 +210,18 @@ const Projects = () => {
     <main className="p-4 w-full">
       <div className="flex">
         <div>
-          {/* {(role === 'mgr' || role === 'rh') && ( */}
-          <Button text="Ajouter un projet" onClick={handleOpenModal} />
-          {/* )} */}
+          {(role === "com" || role === "rh") && (
+            <Button text="Ajouter un projet" onClick={handleOpenModal} />
+          )}
         </div>
 
         <div>
-          {/* {(role === 'mgr' || role === 'rh') && ( */}
-          <Button
-            text="Associer un projet aux développeurs"
-            onClick={handleOpenAssociateModal}
-          />
-          {/* )} */}
+          {(role === "mgr" || role === "rh") && (
+            <Button
+              text="Associer un projet aux développeurs"
+              onClick={handleOpenAssociateModal}
+            />
+          )}
         </div>
       </div>
 

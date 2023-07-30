@@ -3,13 +3,22 @@ import Image from "next/image";
 import Link from "next/link";
 import { AiOutlineMessage } from "react-icons/ai";
 import { BiCalendar } from "react-icons/bi";
+import { AppContext } from "@/pages/_app";
+import { useContext } from "react";
+import { useEffect } from "react";
 
 const Sidebar = () => {
   const [isSocialMenuOpen, setIsSocialMenuOpen] = useState(false);
 
+  const { currentUser } = useContext(AppContext);
+  console.log(currentUser);
   const handleSocialMenuClick = () => {
     setIsSocialMenuOpen(prevIsOpen => !prevIsOpen);
   };
+
+  useEffect(() => {
+    console.log(currentUser);
+  }, []);
   const styles = {
     li: {
       textAlign: "center",
@@ -44,7 +53,7 @@ const Sidebar = () => {
     },
   };
   return (
-    <nav style={styles.sidebar}>
+    <nav className="sticky w-1/5">
       <div style={styles.side}>
         <div className="space-y-8" style={styles.logo}>
           <div className="h-20 flex items-center">
@@ -127,12 +136,24 @@ const Sidebar = () => {
           <li className="flex items-center space-x-2 li-side">
             <Image
               alt="logo"
-              src="/pictos/formation.png"
+              src="/pictos/collaborateurs.png"
               width={20}
               height={20}
               className="mx-4"
             />
-            <Link href="/uers">Utilisateur</Link>
+            <Link href="/users">Collaborateurs</Link>
+          </li>
+          <li className="flex items-center space-x-2 li-side">
+            <Image
+              alt="logo"
+              src="/pictos/myAccount.png"
+              width={20}
+              height={20}
+              className="mx-4"
+            />
+            {currentUser && currentUser.id && (
+              <Link href={`/users/${currentUser.id}`}>Mon compte</Link>
+            )}
           </li>
         </ul>
       </div>

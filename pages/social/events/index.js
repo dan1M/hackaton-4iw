@@ -232,7 +232,10 @@ const Event = () => {
         </div>
       </CustomModal>
       <Title text="Evènements" />
-      <Button text="Ajouter un évènement" onClick={handleOpenModal} />
+      <br />
+      {currentUser.role === "rh" && (
+        <Button text="Ajouter un évènement" onClick={handleOpenModal} />
+      )}
 
       <CustomModal
         isOpen={isModalOpen}

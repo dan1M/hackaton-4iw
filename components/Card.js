@@ -406,18 +406,16 @@ function Card({
             )}
           </div>
           <div className="flex flex-col items-center ">
-            {inscription && status === "✅" ? (
+            {inscription && type === "formation" && status === "✅" ? (
               <div className="text-xl w-24 text-black text-green-700 text-center">
                 {status}
               </div>
-            ) : inscription ? (
+            ) : inscription && type === "formation" ? (
               <div className="text-xl w-24 text-black text-green-700 text-center">
                 {"⏳"}
               </div>
             ) : (
-              <div className="text-xl w-24 text-white  text-center">
-                {"test"}
-              </div>
+              <div className="text-xl w-24 text-white  text-center"></div>
             )}
             {imageUrl && (
               <Image
