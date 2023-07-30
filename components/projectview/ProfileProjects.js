@@ -2,6 +2,7 @@ import { useSessionContext } from '@supabase/auth-helpers-react';
 import { useEffect, useState } from 'react';
 import Title from '@/components/Title';
 import Loader from '@/components/Loading';
+import moment from 'moment';
 
 export default function ProfileProject({ project }) {
   const { supabaseClient } = useSessionContext();
@@ -45,7 +46,7 @@ export default function ProfileProject({ project }) {
             </div>
             <div className="border-b pb-4">
               <p className="text-lg font-bold">Date du projet:</p>
-              <p>{projectData.created_at}</p>
+              <p>{moment(projectData.created_at).format('DD/MM/YYYY HH:mm:ss')}</p>
             </div>
             <div>
               {projectData.client && (

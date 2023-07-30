@@ -1,6 +1,7 @@
 import { useSessionContext } from '@supabase/auth-helpers-react';
 import { useEffect, useState } from 'react';
 import Title from '@/components/Title';
+import moment from 'moment';
 
 export default function ProfileFormation({ formation }) {
   const { supabaseClient } = useSessionContext();
@@ -46,7 +47,7 @@ export default function ProfileFormation({ formation }) {
               <p>{formationData.duration}</p>
               <div className="border-t mt-4 pt-4">
                 <p className="text-lg font-bold">Date de la mise à jour</p>
-                <p>{formationData.created_at}</p>
+                <p>{moment(formationData.created_at).format('DD/MM/YYYY HH:mm:ss')}</p>
               </div>
             </div>
           </div>

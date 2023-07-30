@@ -1,5 +1,6 @@
 import { useSessionContext } from '@supabase/auth-helpers-react';
 import { useEffect, useState } from 'react';
+import moment from 'moment';
 import Title from '@/components/Title';
 
 export default function ProfileEvent({ event }) {
@@ -42,7 +43,7 @@ export default function ProfileEvent({ event }) {
             </div>
             <div className="transition-transform transform hover:scale-95 focus:outline-none focus:ring">
               <p className="text-lg font-bold">Date</p>
-              <p>{eventData.created_at}</p>
+              <p>{moment(eventData.created_at).format('DD/MM/YYYY HH:mm:ss')}</p>
               <div className="border-t mt-4 pt-4">
                 
               </div>
