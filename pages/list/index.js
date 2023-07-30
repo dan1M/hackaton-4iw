@@ -117,7 +117,7 @@ const List = () => {
       }}
     >
       <div className={styles.container}>
-        <Title text="Liste des commandes" />
+        <Title text="Liste des Formations " />
 
         <table className={styles.table}>
           <thead>
