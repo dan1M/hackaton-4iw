@@ -6,6 +6,7 @@ import CustomModal from "@/components/CustomModal";
 import Sidebar from "@/components/Sidebar";
 import Title from "@/components/Title";
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 const Formations = () => {
   const { supabaseClient } = useSessionContext();
@@ -13,10 +14,11 @@ const Formations = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formations, setFormations] = useState([]);
-
+  const [usersWaiting, setUsersWaiting] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     place: "",
+    status: "",
     duration: 0,
   });
 
@@ -41,26 +43,54 @@ const Formations = () => {
   };
 
   useEffect(() => {
-    const user = JSON.parse(sessionStorage.getItem("user"));
-    if (!user) {
-      router.push("/login");
-    }
-  }, []);
-
-  useEffect(() => {
     fetchFormations();
   }, []);
 
   const fetchFormations = async () => {
-    const { data, error } = await supabaseClient.from("formations").select(`
-        *,
-        profilesformations:profilesformations(*)
-      `);
+    try {
+      const { data: formationsData, error: formationsError } =
+        await supabaseClient.from("formations").select("*");
+      if (formationsError) {
+        return;
+      }
+      const statusAttente = "En attente d'acceptation";
+      const { data: profilesFormationsData, error: profilesFormationsError } =
+        await supabaseClient.from("profilesformations").select("*");
+      if (profilesFormationsError) {
+        return;
+      }
+      const formationsWithStatus = formationsData.map(formation => {
+        const matchingProfileFormation = profilesFormationsData.find(
+          profileFormation => profileFormation.formation_id === formation.id
+        );
+        return {
+          ...formation,
+          status: matchingProfileFormation
+            ? matchingProfileFormation.status
+            : statusAttente,
+        };
+      });
+      const hasUsersWaiting = formationsWithStatus.some(
+        formation => formation.status === "En attente d'acceptation"
+      );
 
-    if (data) {
-      setFormations(data);
-    }
+      setUsersWaiting(hasUsersWaiting);
+
+      setFormations(formationsWithStatus);
+    } catch (error) {}
   };
+
+  const handleCreateFormation = async e => {
+    e.preventDefault();
+    const { error } = await supabaseClient.from("formations").insert({
+      name: formData.name,
+      place: formData.place,
+      duration: formData.duration,
+    });
+    handleCloseModal();
+    fetchFormations();
+  };
+
   const handleOpenModal = () => {
     setIsModalOpen(true);
   };
@@ -77,40 +107,44 @@ const Formations = () => {
     }));
   };
 
-  const handleCreateFormation = async e => {
-    e.preventDefault();
-    const { error } = await supabaseClient.from("formations").insert({
-      name: formData.name,
-      place: formData.place,
-      duration: formData.duration,
-    });
-    handleCloseModal();
-    fetchFormations();
-  };
-
   const user =
     typeof window !== "undefined"
       ? JSON.parse(sessionStorage.getItem("user"))
       : null;
   const role = user?.role;
 
-  const formationStatus =
-    typeof window != "undefined"
-      ? JSON.parse(sessionStorage.getItem("profilesformations"))
-      : null;
-  const status = formationStatus?.status;
+  const isRole = role === "mgr" || role === "rh";
 
-  console.log(status);
-
-  const isRole = role === "rh";
+  const styles = {
+    list: {
+      border: "1px solid #fff",
+      borderRadius: "30px",
+      padding: "10px",
+      heigth: "5px",
+      width: "50px",
+      marginTop: "10%",
+      textAlign: "center",
+      color: "#fff",
+    },
+  };
 
   return (
-    <main className="p-4 w-full">
-      <Title text="Formation" />
-      <br />
-      {isRole && (
-        <Button text="Ajouter une formation" onClick={handleOpenModal} />
-      )}
+    <main className="p-4">
+      <div className="flex">
+        <div className="flex">
+          <Button text="Ajouter une formation" onClick={handleOpenModal} />
+        </div>
+
+        <div className="mt-2 ml-4">
+          <Link
+            href="/list"
+            style={styles.list}
+            className="hover:bg-gradient-to-br from-secondary to-carbon-blue group-hover:from-secondary group-hover:carbon-blue"
+          >
+            voire la liste de demandes
+          </Link>
+        </div>
+      </div>
 
       <CustomModal
         isOpen={isModalOpen}

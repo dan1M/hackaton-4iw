@@ -77,7 +77,6 @@ const Projects = () => {
       ? JSON.parse(sessionStorage.getItem("user"))
       : null;
   const role = user?.role;
-  console.log(role);
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -206,19 +205,30 @@ const Projects = () => {
 
   return (
     <main className="p-4">
-      <div>
-        {(role === "mgr" || role === "rh") && (
+      <div className="flex">
+        <div>
+          {/* {(role === 'mgr' || role === 'rh') && ( */}
           <Button text="Ajouter un projet" onClick={handleOpenModal} />
-        )}
-      </div>
+          {/* )} */}
+        </div>
 
-      <div>
-        {(role === "mgr" || role === "rh") && (
+        <div>
+          {/* {(role === 'mgr' || role === 'rh') && ( */}
           <Button
             text="Associer un projet aux développeurs"
             onClick={handleOpenAssociateModal}
           />
-        )}
+          {/* )} */}
+        </div>
+
+        <div>
+          {/* {(role === 'mgr' || role === 'rh') && ( */}
+          <Button
+            text="Associer un projet aux développeurs"
+            onClick={handleOpenAssociateModal}
+          />
+          {/* )} */}
+        </div>
       </div>
 
       {/* Formulaire pour ajouter un projet */}

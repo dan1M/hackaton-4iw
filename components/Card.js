@@ -1,6 +1,7 @@
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import CustomModal from "@/components/CustomModal";
+import { useRouter } from "next/router";
 import Button from "./Button";
 import { useSessionContext } from "@supabase/auth-helpers-react";
 import FormClient from "./form-edit/edit-client";
@@ -8,13 +9,13 @@ import FormProject from "./form-edit/edit-project";
 import FormEvent from "./form-edit/edit-event";
 import FormQuest from "./form-edit/edit-quest";
 import FormFormation from "./form-edit/edit-formation";
-import { useRouter } from "next/router";
 import { ProgressBar } from "./ProgressBar";
 
 function Card({
   id,
   title,
   subtitle,
+  status,
   imageUrl,
   triggerFetch,
   quest,
@@ -24,14 +25,250 @@ function Card({
   const [displayModalDelete, setDisplayModalDelete] = useState(false);
   const [displayModalEdit, setDisplayModalEdit] = useState(false);
   const [showDropdown, setShowDrown] = useState(false);
+  const [inscription, setInscription] = useState(false);
   const { supabaseClient } = useSessionContext();
   const [questData, setQuestData] = useState(null);
   const router = useRouter();
+
+  const user = JSON.parse(sessionStorage.getItem("user"));
 
   useEffect(() => {
     if (quest) setQuestData(quest);
   }, [quest]);
 
+  useEffect(() => {
+    const fetchInscriptionStatus = async () => {
+      if (type === "event" && user) {
+        const isRegistered = await isUserRegisteredForEvent(
+          id,
+          user.id,
+          supabaseClient
+        );
+        setInscription(isRegistered);
+      } else if (type === "formation" && user) {
+        const isRegisteredFormation = await isUserRegisteredFormation(
+          id,
+          user.id,
+          supabaseClient
+        );
+        setInscription(isRegisteredFormation);
+      }
+    };
+    fetchInscriptionStatus();
+  }, [type, id, user, supabaseClient]);
+
+  const isUserRegisteredForEvent = async (
+    eventId,
+    profileId,
+    supabaseClient
+  ) => {
+    try {
+      const { data, error } = await supabaseClient
+        .from("profilesevents")
+        .select("*")
+        .eq("event_id", eventId)
+        .eq("profile_id", profileId)
+        .single();
+
+      if (data) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      return false;
+    }
+  };
+
+  const handleRegisterEvent = async eventId => {
+    try {
+      if (!user) {
+        return;
+      }
+
+      const { data: profileData, error: profileError } = await supabaseClient
+        .from("profiles")
+        .select("id")
+        .eq("email", user.email)
+        .single();
+
+      if (profileError) {
+        console.error("Error fetching user profile:", profileError);
+        return;
+      }
+
+      const profileId = profileData?.id;
+
+      if (!profileId) {
+        return;
+      }
+
+      const statusformations =
+        typeof window !== "undefined"
+          ? JSON.parse(sessionStorage.getItem("profilesformations"))
+          : null;
+      const status = statusformations?.role;
+      if (!status) {
+        return "en attente d 'acceptation";
+      }
+      console.log(status);
+
+      if (await isUserRegisteredForEvent(eventId, profileId, supabaseClient)) {
+        const { data, error } = await supabaseClient
+          .from("profilesevents")
+          .delete()
+          .eq("event_id", eventId)
+          .eq("profile_id", profileId);
+
+        if (data) {
+          setInscription(false);
+          fetchEvents();
+        }
+      } else {
+        const { data, error } = await supabaseClient
+          .from("profilesevents")
+          .insert([{ event_id: eventId, profile_id: profileId }]);
+
+        if (data) {
+          setInscription(true);
+          fetchEvents();
+        }
+      }
+    } catch (error) {
+      console.error(
+        "Error registering/unregistering user for the event:",
+        error.message
+      );
+    }
+
+    const { data: profileData, error: profileError } = await supabaseClient
+      .from("profiles")
+      .select("id")
+      .eq("email", user.email)
+      .single();
+
+    if (profileError) {
+      console.error("Error fetching user profile:", profileError);
+      return;
+    }
+
+    const profileId = profileData?.id;
+
+    if (!profileId) {
+      console.error("Error: Profile ID not found.");
+      return;
+    }
+
+    if (await isUserRegisteredForEvent(eventId, profileId, supabaseClient)) {
+      const { data, error } = await supabaseClient
+        .from("profilesevents")
+        .delete()
+        .eq("event_id", eventId)
+        .eq("profile_id", profileId);
+      console.log(data);
+      if (data) {
+        setInscription(false);
+        fetchEvents();
+      }
+    } else {
+      const { data, error } = await supabaseClient
+        .from("profilesevents")
+        .insert([{ event_id: eventId, profile_id: profileId }]);
+
+      if (data) {
+        setInscription(true);
+        fetchEvents();
+      }
+    }
+
+    window.location.reload();
+  };
+
+  const isUserRegisteredFormation = async (
+    formationId,
+    profileId,
+    supabaseClient
+  ) => {
+    try {
+      const { data, error } = await supabaseClient
+        .from("profilesformations")
+        .select("*")
+        .eq("formation_id", formationId)
+        .eq("profile_id", profileId)
+        .single();
+
+      if (data) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      console.error("Error checking formation registration:", error.message);
+      return false;
+    }
+  };
+
+  const handleRegisterFormation = async formationId => {
+    try {
+      if (!user) {
+        return;
+      }
+
+      const { data: profileData, error: profileError } = await supabaseClient
+        .from("profiles")
+        .select("id")
+        .eq("email", user.email)
+        .single();
+
+      if (profileError) {
+        console.error("Error fetching user profile:", profileError);
+        return;
+      }
+
+      const profileId = profileData?.id;
+
+      if (!profileId) {
+        return;
+      }
+
+      const isRegistered = await isUserRegisteredFormation(
+        formationId,
+        profileId,
+        supabaseClient
+      );
+
+      if (isRegistered) {
+        const { data, error } = await supabaseClient
+          .from("profilesformations")
+          .delete()
+          .eq("formation_id", formationId)
+          .eq("profile_id", profileId);
+
+        if (data) {
+          setInscription(false);
+        } else {
+          console.error("Error unregistering user from the formation", error);
+        }
+        window.location.reload();
+      } else {
+        const { data, error } = await supabaseClient
+          .from("profilesformations")
+          .insert([{ formation_id: formationId, profile_id: profileId }]);
+
+        if (data) {
+          setInscription(true);
+        } else {
+          console.error("Error registering user for the formation:", error);
+        }
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error(
+        "Error registering/unregistering user for the formation",
+        error.message
+      );
+    }
+  };
   const customStyles = {
     content: {
       top: "50%",
@@ -126,10 +363,16 @@ function Card({
               router.push(`/users/${id}`);
               break;
             case "project":
-              router.push(`/projects/${id}`);
+              router.push(`/project/${id}`);
               break;
             case "event":
               router.push(`/social/events/${id}`);
+              break;
+            case "quests":
+              router.push(`/social/quests/${id}`);
+              break;
+            case "formation":
+              router.push(`/formations/${id}`);
               break;
             default:
           }
@@ -204,6 +447,11 @@ function Card({
             )}
           </div>
           <div className="flex flex-col items-center ">
+            {inscription && (
+              <div className="text-xl w-24 text-black text-green-700 text-center">
+                {status}
+              </div>
+            )}
             {imageUrl && (
               <Image
                 className="w-24 h-24 mb-3 rounded-full shadow-lg"
@@ -237,6 +485,35 @@ function Card({
               <ProgressBar
                 value={quest.values === null ? 0 : quest.values.length}
                 maxValue={quest.quests.number_to_do}
+              />
+            )}
+          </div>
+
+          <div style={{ textAlign: "center", cursor: "pointer" }}>
+            {type === "event" && user && (
+              <Button
+                text={inscription ? "Se désinscrire" : "S'inscrire"}
+                onClick={e => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleRegisterEvent(id);
+                }}
+              />
+            )}
+            {type === "formation" && !user && (
+              <p>Please log in to register for this event.</p>
+            )}
+          </div>
+
+          <div style={{ textAlign: "center", cursor: "pointer" }}>
+            {type === "formation" && user && (
+              <Button
+                text={inscription ? "Se désinscrire" : "S'inscrire"}
+                onClick={e => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleRegisterFormation(id);
+                }}
               />
             )}
             {quest &&
@@ -351,6 +628,7 @@ function Card({
                 id={id}
                 triggerFetch={() => {
                   triggerFetch();
+
                   setDisplayModalEdit(false);
                 }}
               />
