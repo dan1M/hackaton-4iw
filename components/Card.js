@@ -12,7 +12,7 @@ import FormFormation from "./form-edit/edit-formation";
 import { ProgressBar } from "./ProgressBar";
 
 function Card({
-  id,
+  id, 
   title,
   subtitle,
   status,
@@ -39,7 +39,7 @@ function Card({
   useEffect(() => {
     const fetchInscriptionStatus = async () => {
       if (type === "event" && user) {
-        const isRegistered = await isUserRegisteredForEvent(
+        const isRegistered = await isUserRegisteredEvent(
           id,
           user.id,
           supabaseClient
@@ -57,133 +57,6 @@ function Card({
     fetchInscriptionStatus();
   }, [type, id, user, supabaseClient]);
 
-  const isUserRegisteredForEvent = async (
-    eventId,
-    profileId,
-    supabaseClient
-  ) => {
-    try {
-      const { data, error } = await supabaseClient
-        .from("profilesevents")
-        .select("*")
-        .eq("event_id", eventId)
-        .eq("profile_id", profileId)
-        .single();
-
-      if (data) {
-        return true;
-      } else {
-        return false;
-      }
-    } catch (error) {
-      return false;
-    }
-  };
-
-  const handleRegisterEvent = async eventId => {
-    try {
-      if (!user) {
-        return;
-      }
-
-      const { data: profileData, error: profileError } = await supabaseClient
-        .from("profiles")
-        .select("id")
-        .eq("email", user.email)
-        .single();
-
-      if (profileError) {
-        console.error("Error fetching user profile:", profileError);
-        return;
-      }
-
-      const profileId = profileData?.id;
-
-      if (!profileId) {
-        return;
-      }
-
-      const statusformations =
-        typeof window !== "undefined"
-          ? JSON.parse(sessionStorage.getItem("profilesformations"))
-          : null;
-      const status = statusformations?.role;
-      if (!status) {
-        return "en attente d 'acceptation";
-      }
-      console.log(status);
-
-      if (await isUserRegisteredForEvent(eventId, profileId, supabaseClient)) {
-        const { data, error } = await supabaseClient
-          .from("profilesevents")
-          .delete()
-          .eq("event_id", eventId)
-          .eq("profile_id", profileId);
-
-        if (data) {
-          setInscription(false);
-          fetchEvents();
-        }
-      } else {
-        const { data, error } = await supabaseClient
-          .from("profilesevents")
-          .insert([{ event_id: eventId, profile_id: profileId }]);
-
-        if (data) {
-          setInscription(true);
-          fetchEvents();
-        }
-      }
-    } catch (error) {
-      console.error(
-        "Error registering/unregistering user for the event:",
-        error.message
-      );
-    }
-
-    const { data: profileData, error: profileError } = await supabaseClient
-      .from("profiles")
-      .select("id")
-      .eq("email", user.email)
-      .single();
-
-    if (profileError) {
-      console.error("Error fetching user profile:", profileError);
-      return;
-    }
-
-    const profileId = profileData?.id;
-
-    if (!profileId) {
-      console.error("Error: Profile ID not found.");
-      return;
-    }
-
-    if (await isUserRegisteredForEvent(eventId, profileId, supabaseClient)) {
-      const { data, error } = await supabaseClient
-        .from("profilesevents")
-        .delete()
-        .eq("event_id", eventId)
-        .eq("profile_id", profileId);
-      console.log(data);
-      if (data) {
-        setInscription(false);
-        fetchEvents();
-      }
-    } else {
-      const { data, error } = await supabaseClient
-        .from("profilesevents")
-        .insert([{ event_id: eventId, profile_id: profileId }]);
-
-      if (data) {
-        setInscription(true);
-        fetchEvents();
-      }
-    }
-
-    window.location.reload();
-  };
-
   const isUserRegisteredFormation = async (
     formationId,
     profileId,
@@ -196,7 +69,7 @@ function Card({
         .eq("formation_id", formationId)
         .eq("profile_id", profileId)
         .single();
-
+        console.log(data)
       if (data) {
         return true;
       } else {
@@ -207,6 +80,8 @@ function Card({
       return false;
     }
   };
+
+
 
   const handleRegisterFormation = async formationId => {
     try {
@@ -269,6 +144,95 @@ function Card({
       );
     }
   };
+
+  //for event
+
+  const handleRegisterEvent= async eventId => {
+    try {
+      if (!user) {
+        return;
+      }
+
+      const { data: profileData, error: profileError } = await supabaseClient
+        .from("profiles")
+        .select("id")
+        .eq("email", user.email)
+        .single();
+
+      if (profileError) {
+        console.error("Error fetching user profile:", profileError);
+        return;
+      }
+
+      const profileId = profileData?.id;
+
+      if (!profileId) {
+        return;
+      }
+
+      const isRegistered = await isUserRegisteredEvent(
+        eventId,
+        profileId,
+        supabaseClient
+      );
+
+      if (isRegistered) {
+        const { data, error } = await supabaseClient
+          .from("profilesevents")
+          .delete()
+          .eq("event_id", eventId)
+          .eq("profile_id", profileId);
+
+        if (data) {
+          setInscription(false);
+        } else {
+          console.error("Error unregistering user from the formation", error);
+        }
+        window.location.reload();
+      } else {
+        const { data, error } = await supabaseClient
+          .from("profilesevents")
+          .insert([{ event_id: eventId, profile_id: profileId }]);
+
+        if (data) {
+          setInscription(true);
+        } else {
+          console.error("Error registering user for the formation:", error);
+        }
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error(
+        "Error registering/unregistering user for the formation",
+        error.message
+      );
+    }
+  };
+
+    //for event
+    const isUserRegisteredEvent = async (
+      eventId,
+       profileId,
+       supabaseClient
+     ) => {
+       try {
+         const { data, error } = await supabaseClient
+           .from("profilesevents")
+           .select("*")
+           .eq("event_id", eventId)
+           .eq("profile_id", profileId)
+           .single();
+           console.log(data)
+         if (data) {
+           return true;
+         } else {
+           return false;
+         }
+       } catch (error) {
+         console.error("Error checking event registration:", error.message);
+         return false;
+       }
+     };
   const customStyles = {
     content: {
       top: "50%",
