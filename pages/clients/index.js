@@ -5,10 +5,13 @@ import { useEffect, useState } from "react";
 import CustomModal from "@/components/CustomModal";
 import Title from "@/components/Title";
 import { useRouter } from "next/router";
+import { useContext } from "react";
+import { AppContext } from "../_app";
 
 const Clients = () => {
   const { supabaseClient } = useSessionContext();
   const router = useRouter();
+  const { currentUser } = useContext(AppContext);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [clients, setClients] = useState([]);
@@ -116,7 +119,10 @@ const Clients = () => {
   return (
     <main className="p-4 w-4/5">
       <Title text="Clients" />
-      <Button text="Ajouter un client" onClick={handleOpenModal} />
+      {(currentUser && currentUser.role === "rh") ||
+        (currentUser.role === "com" && (
+          <Button text="Ajouter un client" onClick={handleOpenModal} />
+        ))}
 
       <CustomModal
         isOpen={isModalOpen}

@@ -4,11 +4,14 @@ import { useSessionContext } from "@supabase/auth-helpers-react";
 import { useEffect, useState } from "react";
 import CustomModal from "@/components/CustomModal";
 import Title from "@/components/Title";
+import { useContext } from "react";
+import { AppContext } from "../_app";
 
 const Users = () => {
   const { supabaseClient } = useSessionContext();
   const [displayNewUser, setDisplayNewUser] = useState(false);
   const [users, setUsers] = useState([]);
+  const { currentUser } = useContext(AppContext);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -85,12 +88,15 @@ const Users = () => {
   return (
     <main className="p-4 w-4/5">
       <Title text="Collaborateurs" />
-      <Button
-        text="Ajouter un utilisateur"
-        onClick={() => {
-          setDisplayNewUser(!displayNewUser);
-        }}
-      />
+      <br />
+      {currentUser && currentUser.role === "rh" && (
+        <Button
+          text="Ajouter un utilisateur"
+          onClick={() => {
+            setDisplayNewUser(!displayNewUser);
+          }}
+        />
+      )}
 
       <CustomModal
         isOpen={displayNewUser}

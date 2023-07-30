@@ -102,11 +102,15 @@ const Formations = () => {
 
   console.log(status);
 
-  const isRole = role === "mgr" || role === "rh";
+  const isRole = role === "rh";
 
   return (
     <main className="p-4 w-full">
-      <Button text="Ajouter une formation" onClick={handleOpenModal} />
+      <Title text="Formation" />
+      <br />
+      {isRole && (
+        <Button text="Ajouter une formation" onClick={handleOpenModal} />
+      )}
 
       <CustomModal
         isOpen={isModalOpen}

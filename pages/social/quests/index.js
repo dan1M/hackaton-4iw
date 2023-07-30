@@ -145,7 +145,10 @@ const Quests = () => {
   return (
     <main className="p-4 w-4/5">
       <Title text="Quêtes" />
-      <Button text="Ajouter une quete" onClick={handleOpenModalCustom} />
+      <br />
+      {currentUser && currentUser.role === "rh" && (
+        <Button text="Ajouter une quete" onClick={handleOpenModalCustom} />
+      )}
       <CustomModal
         isOpen={isModalCustomOpen}
         onRequestClose={handleCloseModalCustom}
