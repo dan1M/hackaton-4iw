@@ -53,7 +53,7 @@ const Sidebar = () => {
     },
   };
   return (
-    <nav className="sticky w-1/5">
+    <nav className="sticky w-1/5 h-full">
       <div style={styles.side}>
         <div className="space-y-8" style={styles.logo}>
           <div className="h-20 flex items-center">

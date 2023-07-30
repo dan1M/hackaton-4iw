@@ -107,21 +107,14 @@ const Projects = () => {
 
   const handleCreateProject = async e => {
     e.preventDefault();
-    try {
-      const { data: projectData, error: projectError } = await supabaseClient
-        .from("projects")
-        .insert([{ name: formData.name, client_id: formData.client_id }]);
+    console.log(formData);
+    const { data: projectData, error: projectError } = await supabaseClient
+      .from("projects")
+      .insert([{ name: formData.name, client_id: formData.client_id }]);
 
-      if (projectData) {
-        console.log("Project added successfully!");
-        handleCloseModal();
-        fetchProjects();
-      } else {
-        console.error("Error adding project:", projectError);
-      }
-    } catch (error) {
-      console.error("Error adding project:", error.message);
-    }
+    console.log("Project added successfully!");
+    handleCloseModal();
+    fetchProjects();
   };
 
   const handleAddClientToProject = async projectId => {
@@ -213,18 +206,20 @@ const Projects = () => {
       <br />
       <div className="flex">
         <div>
-          {(role === "com" || role === "rh") && (
-            <Button text="Ajouter un projet" onClick={handleOpenModal} />
-          )}
+          {currentUser &&
+            (currentUser.role === "rh" || currentUser.role === "com") && (
+              <Button text="Ajouter un projet" onClick={handleOpenModal} />
+            )}
         </div>
 
         <div>
-          {(role === "mgr" || role === "rh") && (
-            <Button
-              text="Associer un projet aux développeurs"
-              onClick={handleOpenAssociateModal}
-            />
-          )}
+          {currentUser &&
+            (currentUser.role === "rh" || currentUser.role === "com") && (
+              <Button
+                text="Associer un projet aux développeurs"
+                onClick={handleOpenAssociateModal}
+              />
+            )}
         </div>
       </div>
 
@@ -364,7 +359,7 @@ const Projects = () => {
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     required
                   >
-                    <option value="">électionner un project pour les</option>
+                    <option value="">Sélectionner un project pour les</option>
                     {projects.map(project => (
                       <option key={project.id} value={project.id}>
                         {project.name}
@@ -386,7 +381,9 @@ const Projects = () => {
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     required
                   >
-                    <option value="">électionner un developpeur ou plus</option>
+                    <option value="">
+                      Sélectionner un developpeur ou plus
+                    </option>
                     {users.map(user => (
                       <option key={user.username} value={user.id}>
                         {user.username}

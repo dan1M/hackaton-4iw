@@ -57,16 +57,19 @@ export default function Profile() {
           table: "profiles",
         },
         async payload => {
-          const { data: publicUrl } = await supabaseClient.storage
-            .from("uploads")
-            .getPublicUrl(`contents/${payload.new.avatar_url}`);
-          const userUpdate = payload.new;
-          userUpdate.imageUrl = publicUrl.publicUrl;
+          const user = JSON.parse(sessionStorage.getItem("user"));
+          if (user.id == payload.new.id) {
+            const { data: publicUrl } = await supabaseClient.storage
+              .from("uploads")
+              .getPublicUrl(`contents/${payload.new.avatar_url}`);
+            const userUpdate = payload.new;
+            userUpdate.imageUrl = publicUrl.publicUrl;
 
-          setProfile(userUpdate);
+            setProfile(userUpdate);
 
-          const dataUser = JSON.stringify(payload.new);
-          sessionStorage.setItem("user", dataUser);
+            const dataUser = JSON.stringify(payload.new);
+            sessionStorage.setItem("user", dataUser);
+          }
         }
       )
       .subscribe();

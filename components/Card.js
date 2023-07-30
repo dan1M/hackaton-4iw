@@ -412,11 +412,11 @@ function Card({
           )}
 
           <div className="flex flex-col items-center ">
-            {inscription && status === "✅" ? (
+            {inscription && type === "formation" && status === "✅" ? (
               <div className="text-xl w-24 text-black text-green-700 text-center">
                 {status}
               </div>
-            ) : inscription ? (
+            ) : inscription && type === "formation" ? (
               <div className="text-xl w-24 text-black text-green-700 text-center">
                 {"⏳"}
               </div>
@@ -542,7 +542,7 @@ function Card({
             </button>
             <div className="px-6 py-6 lg:px-8">
               <h3 className="mb-4 text-xl font-medium text-gray-900 dark:text-white">
-                Supprimer un client
+                Supprimer
               </h3>
               <Button
                 text="Confirmer"

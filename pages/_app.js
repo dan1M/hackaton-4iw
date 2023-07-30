@@ -30,9 +30,12 @@ export default function App({ Component, pageProps }) {
           table: "profiles",
         },
         payload => {
-          const dataUser = JSON.stringify(payload.new);
-          sessionStorage.setItem("user", dataUser);
-          setCurrentUser(payload.new);
+          const user = JSON.parse(sessionStorage.getItem("user"));
+          if (user.id == payload.new.id) {
+            const dataUser = JSON.stringify(payload.new);
+            sessionStorage.setItem("user", dataUser);
+            setCurrentUser(payload.new);
+          }
         }
       )
       .subscribe();
