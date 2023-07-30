@@ -140,7 +140,55 @@ function Card({
         error.message
       );
     }
-  };
+
+    const { data: profileData, error: profileError } = await supabaseClient
+      .from('profiles')
+      .select('id')
+      .eq('email', user.email)
+      .single();
+
+    if (profileError) {
+      console.error('Error fetching user profile:', profileError);
+      return;
+    }
+
+    const profileId = profileData?.id;
+
+    if (!profileId) {
+      console.error('Error: Profile ID not found.');
+      return;
+    }
+
+    if (await isUserRegisteredForEvent(eventId, profileId, supabaseClient)) {
+      const { data, error } = await supabaseClient
+        .from('profilesevents')
+        .delete()
+        .eq('event_id', eventId)
+        .eq('profile_id', profileId);
+        console.log(data)
+      if (data) {
+        setInscription(false); 
+        fetchEvents(); 
+      }
+    } else {
+     
+      const { data, error } = await supabaseClient
+        .from('profilesevents')
+        .insert([{ event_id: eventId, profile_id: profileId }]);
+
+      if (data) {
+        setInscription(true); 
+        fetchEvents(); 
+      }
+    }
+
+    window.location.reload();
+  } catch (error) {
+    console.error('Error registering/unregistering user for the event:', error.message);
+  }
+};
+
+
 
   const isUserRegisteredFormation = async (
     formationId,
@@ -444,6 +492,37 @@ function Card({
                 value={quest.values === null ? 0 : quest.values.length}
                 maxValue={quest.quests.number_to_do}
               />
+            )}
+          </div>
+            
+          <div style={{ textAlign: "center", cursor: "pointer" }}>
+            {type === "event" && user && (
+             <Button
+             text={inscription ? "Se désinscrire" : "S'inscrire"}
+             onClick={(e) => {
+               e.preventDefault();
+               e.stopPropagation();
+               handleRegisterEvent(id);
+             }}
+           />
+           
+            )}
+            {type === "formation" && !user && ( 
+              <p>Please log in to register for this event.</p>
+            )}
+        </div>  
+        
+          <div style={{ textAlign: "center", cursor: "pointer" }}>
+            {type === "formation" && user && (
+             <Button
+             text={inscription ? "Se désinscrire" : "S'inscrire"}
+             onClick={(e) => {
+               e.preventDefault();
+               e.stopPropagation();
+               handleRegisterFormation(id);
+             }}
+           />
+           
             )}
             {quest &&
               quest.quests.quest_type === "custom" &&
