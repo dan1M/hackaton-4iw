@@ -8,6 +8,7 @@ import ProfileSkills from "@/components/profile/ProfileSkills";
 import ProfileHistory from "@/components/profile/ProfileHistory";
 import { AppContext } from "@/pages/_app";
 import Title from "@/components/Title";
+import RpgZone from "@/components/RpgZone";
 
 export default function Bonus() {
   const router = useRouter();
@@ -46,8 +47,8 @@ export default function Bonus() {
                 {" "}
                 {/* Ajout de "flex flex-col" pour afficher les éléments en colonne */}
                 <div>{bonus.name}</div>
-                <div>{bonus.description}</div>
-                <div>{bonus.lvl_bonus}</div>
+                <div>Description : {bonus.description}</div>
+                <div>Niveau requis : {bonus.lvl_bonus}</div>
               </div>
             );
           })}

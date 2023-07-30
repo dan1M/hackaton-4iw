@@ -204,20 +204,11 @@ const Projects = () => {
   };
 
   return (
-    <main className="p-4">
+    <main className="p-4 w-full">
       <div className="flex">
         <div>
           {/* {(role === 'mgr' || role === 'rh') && ( */}
           <Button text="Ajouter un projet" onClick={handleOpenModal} />
-          {/* )} */}
-        </div>
-
-        <div>
-          {/* {(role === 'mgr' || role === 'rh') && ( */}
-          <Button
-            text="Associer un projet aux développeurs"
-            onClick={handleOpenAssociateModal}
-          />
           {/* )} */}
         </div>
 
@@ -413,7 +404,7 @@ const Projects = () => {
             key={project.id}
             id={project.id}
             title={project.name}
-            imageUrl={"noImage.jpeg"}
+            // imageUrl={"noImage.jpeg"}
             triggerFetch={id => {
               if (id) {
                 setProjects(projects.filter(project => project.id !== id));

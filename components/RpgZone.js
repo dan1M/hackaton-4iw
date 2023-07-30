@@ -30,23 +30,6 @@ export default function RpgZone() {
     setActualXp(actualXp);
   };
 
-  const addXpToUser = async () => {
-    const xpToAdd = 10;
-
-    if (currentUser) {
-      const { data, error } = await supabaseClient
-        .from("profiles")
-        .update({ xp_global: currentUser.xp_global + xpToAdd })
-        .eq("id", currentUser.id)
-        .select();
-
-      if (data) {
-        sessionStorage.setItem("user", JSON.stringify(data[0]));
-        updateCurrentUser(data[0]);
-      }
-    }
-  };
-
   return (
     <div className="fixed bottom-0 right-0 rounded-lg w-4/5 h-20 bg-white">
       <div className="flex items-center h-full max-w-5xl mx-auto">
