@@ -1,39 +1,39 @@
-import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
-import { useSessionContext } from '@supabase/auth-helpers-react';
-import ProfileFormation from '@/components/formationview/ProfileFormation';
-import Loader from '@/components/Loading';
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import { useSessionContext } from "@supabase/auth-helpers-react";
+import ProfileFormation from "@/components/formationview/ProfileFormation";
+import Loader from "@/components/Loading";
 
 export default function ViewClient() {
   const router = useRouter();
   const { id } = router.query;
   const { supabaseClient } = useSessionContext();
   const [formation, setFormation] = useState(null);
-  const [isLoading, setIsLoading] = useState(true); 
+  const [isLoading, setIsLoading] = useState(true);
 
   const fetchFormation = async () => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
       const { data, error } = await supabaseClient
-        .from('formations')
+        .from("formations")
         .select("*")
-        .eq('id', id)
+        .eq("id", id)
         .single();
 
       if (data) {
         setFormation(data);
       }
     } catch (error) {
-      console.error('Error fetching formation:', error.message);
+      console.error("Error fetching formation:", error.message);
     } finally {
-      setIsLoading(false); 
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
     if (id) {
-        fetchFormation();
+      fetchFormation();
     }
   }, [id]);
 

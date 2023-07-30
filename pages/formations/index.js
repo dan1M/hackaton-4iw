@@ -129,7 +129,7 @@ const Formations = () => {
   };
 
   return (
-    <main className="p-4">
+    <main className="p-4 w-full">
       <div className="flex">
         <div className="flex">
           <Button text="Ajouter une formation" onClick={handleOpenModal} />
