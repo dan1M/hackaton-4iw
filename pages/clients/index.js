@@ -119,6 +119,7 @@ const Clients = () => {
   return (
     <main className="p-4 w-4/5">
       <Title text="Clients" />
+      <br />
       {(currentUser && currentUser.role === "rh") ||
         (currentUser.role === "com" && (
           <Button text="Ajouter un client" onClick={handleOpenModal} />
